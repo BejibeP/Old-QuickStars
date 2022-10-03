@@ -5,31 +5,9 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{5C699886-FE5F-466F-9155-75F81A9B2E25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enki-IS4", "Api\Enki-IS4\Enki-IS4.csproj", "{5E9B0919-A801-4582-9CE3-F6F9314B27D5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enki-JWT", "Api\Enki-JWT\Enki-JWT.csproj", "{9B7E81D9-6760-456A-852C-18310DC26360}"
-EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5E9B0919-A801-4582-9CE3-F6F9314B27D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E9B0919-A801-4582-9CE3-F6F9314B27D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E9B0919-A801-4582-9CE3-F6F9314B27D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E9B0919-A801-4582-9CE3-F6F9314B27D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B7E81D9-6760-456A-852C-18310DC26360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B7E81D9-6760-456A-852C-18310DC26360}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B7E81D9-6760-456A-852C-18310DC26360}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B7E81D9-6760-456A-852C-18310DC26360}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{5E9B0919-A801-4582-9CE3-F6F9314B27D5} = {5C699886-FE5F-466F-9155-75F81A9B2E25}
-		{9B7E81D9-6760-456A-852C-18310DC26360} = {5C699886-FE5F-466F-9155-75F81A9B2E25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72659ACE-2446-4D12-9F36-6B4BB366853E}
