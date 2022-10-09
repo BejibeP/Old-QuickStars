@@ -1,6 +1,18 @@
-Cette section contient différentes bases pour des API
+Cette section contient differentes bases pour des API
 
-Enki-[JWT/IS4] : Enki est une api ASP.NET Core (v6) standard avec BDD et Authentification
-Il y a deux variation de cette api :
-JWT : Enki avec une authentification JWT
-IS4 : Enki avec une authentification basée sur IdentityServer4
+MaViCS : Api ASP.NET Core architecturée en MVCS
+Cett API possède une template qui permet de la créer avec ces variations :
+- JWT Auth
+- IS4 Auth
+- API
+- Demo Project (Shrines ?)
+
+CLARK : Api ASP.NET Core architecturé en Clean Architecture (Onion/Hexagonal)
+Cett API possède une template qui permet de la créer avec ces variations :
+- No Repository Pattern
+- CQRS Pattern in lieu of classic services
+- JWT Auth
+- IS4 Auth
+- API
+- Web UI ?
+- Demo Project (Shrines ?)
