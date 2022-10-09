@@ -11,6 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ex", "ex", "{86AD72F6-172B-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Komyunity-Api", "..\..\..\..\B.A.D.C.O.P.Y\for-komyunity\Komyunity\Komyunity-Api\Komyunity-Api.csproj", "{4B56F89B-9F00-4755-BE23-2A5B8C40F5F0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVCS", "MVCS", "{73222DCD-C3D7-4AF0-86FE-5DC2076219DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{17D696C0-0217-4E0D-94F5-D5D18941BFCC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +41,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{55DA14C3-AD69-4C56-89D1-C6646661CF91} = {73222DCD-C3D7-4AF0-86FE-5DC2076219DF}
 		{4B56F89B-9F00-4755-BE23-2A5B8C40F5F0} = {86AD72F6-172B-41B1-8953-3FA505D96668}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

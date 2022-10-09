@@ -17,7 +17,6 @@ namespace Enki.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult Get()
         {
             return Ok(_userService.GetAllUsers());

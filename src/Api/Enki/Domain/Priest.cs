@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace Enki.Domain
 {
@@ -18,6 +14,6 @@ namespace Enki.Domain
 
         public DateTime DateOfDeath { get; set; }
 
-        public string Home { get; set; } // localisation ?
+        public Point HomeCoordinates { get; set; }
     }
 }

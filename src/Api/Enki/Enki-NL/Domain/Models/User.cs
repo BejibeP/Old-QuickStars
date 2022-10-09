@@ -9,7 +9,6 @@
         public string Password { get; set; }
         public DateTime RegisteredOn { get; set; }
         public string Order { get; set; }
-        public List<Pilgrimage> Pilgrimages { get; set; }
 
     }
 }
