@@ -4,10 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>Enki.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Enki.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MaViCS.Domain\MaViCS.Domain.csproj" />
+    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 </Project>
