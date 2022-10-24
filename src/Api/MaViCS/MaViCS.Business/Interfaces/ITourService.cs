@@ -5,27 +5,27 @@ namespace MaViCS.Business.Interfaces
     public interface ITourService
     {
 
-        List<TourDto> GetTours();
+        Task<IEnumerable<TourDto>> GetTours();
 
-        List<TourDto> GetToursByTalent(long talentId);
+        Task<IEnumerable<TourDto>> GetToursByTalent(long talentId);
 
-        IOrderedEnumerable<ShowDto> GetShowsByTour(long tourId);
+        Task<IOrderedEnumerable<ShowDto>> GetShowsByTour(long tourId);
 
-        TourDto? GetTourById(long id);
+        Task<TourDto?> GetTourById(long id);
 
-        TourDto? AddTour(CreateOrUpdateTourDto tourDto);
+        Task<TourDto?> AddTour(CreateOrUpdateTourDto tourDto);
 
-        TourDto? UpdateTour(long id, CreateOrUpdateTourDto tourDto);
+        Task<TourDto?> UpdateTour(long id, CreateOrUpdateTourDto tourDto);
 
-        ShowDto? AddShow(long tourId, CreateOrUpdateShowDto showDto);
+        Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto);
 
-        ShowDto? UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto);
+        Task<ShowDto?> UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto);
 
-        bool ArchiveTour(long id);
+        Task<bool> ArchiveTour(long id);
 
-        bool DeleteTour(long id);
+        Task<bool> DeleteTour(long id);
 
-        bool DeleteShow(long id);
+        Task<bool> DeleteShow(long id);
 
     }
 }

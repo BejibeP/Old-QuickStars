@@ -9,138 +9,181 @@ namespace MaViCS.Controllers
     [ApiController]
     public class TourController : ControllerBase
     {
-        private static ITourService _tourService;
-        
+        private readonly ITourService _tourService;
+
         public TourController(ITourService tourService)
         {
             _tourService = tourService;
         }
 
-        [Route("GetTours")]
         [HttpGet]
-        public ActionResult<List<TourDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetAll()
         {
-            return Ok(_tourService.GetTours());
+            var tours = await _tourService.GetTours();
+            return Ok(tours);
         }
 
-        [Route("GetToursByTalents")]
-        [HttpGet]
-        public ActionResult<List<TourDto>> GetByTalents(long talentId)
+        [HttpGet("{talentId}")]
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetByTalents([FromQuery] long talentId)
         {
-            return Ok(_tourService.GetToursByTalent(talentId));
+            var tours = await _tourService.GetToursByTalent(talentId);
+            return Ok(tours);
         }
 
-        [Route("GetShowsByTour")]
-        [HttpGet]
-        public ActionResult<IOrderedEnumerable<ShowDto>> GetByTour(long tourId)
+        [HttpGet("{tourId}")]
+        public async Task<ActionResult<IOrderedEnumerable<ShowDto>>> GetByTour([FromQuery] long tourId)
         {
-            return Ok(_tourService.GetShowsByTour(tourId));
+            var shows = await _tourService.GetShowsByTour(tourId);
+            return Ok(shows);
         }
 
-        [Route("GetTourById")]
-        [HttpGet]
-        public ActionResult<TourDto> GetById(long id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TourDto>> GetById([FromQuery] long id)
         {
-            var tour = _tourService.GetTourById(id);
-            if (tour is null) return NotFound();
+            var tour = await _tourService.GetTourById(id);
+
+            if (tour is null)
+                return NotFound();
 
             return Ok(tour);
         }
 
-        [Route("CreateTour")]
         [HttpPost]
-        public ActionResult<TourDto> Create(CreateOrUpdateTourDto tourDto)
+        public async Task<ActionResult<TourDto>> Create([FromBody] CreateOrUpdateTourDto tourDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var tour = _tourService.AddTour(tourDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (tour is null) return BadRequest();
+                var tour = await _tourService.AddTour(tourDto);
+
+                if (tour is null)
+                    return BadRequest();
 
                 return Ok(tour);
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
-        [Route("CreateShow")]
-        [HttpPost]
-        public ActionResult<ShowDto> CreateShow(long tourId, CreateOrUpdateShowDto showDto)
+        [HttpPost("{tourId}")]
+        public async Task<ActionResult<ShowDto>> CreateShow([FromQuery] long tourId, [FromBody] CreateOrUpdateShowDto showDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var show = _tourService.AddShow(tourId, showDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (show is null) return BadRequest();
+                var show = await _tourService.AddShow(tourId, showDto);
+
+                if (show is null)
+                    return BadRequest();
 
                 return Ok(show);
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
-        [Route("UpdateTour")]
-        [HttpPut]
-        public ActionResult<TourDto> Update(long id, CreateOrUpdateTourDto tourDto)
+        [HttpPut("{tourId}")]
+        public async Task<ActionResult<TourDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateTourDto tourDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var tour = _tourService.UpdateTour(id, tourDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (tour is null) return BadRequest();
+                var tour = await _tourService.UpdateTour(id, tourDto);
 
-                return Ok(tour);
+                if (tour is null)
+                    return BadRequest();
+
+                return NoContent();
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
-            }
-        }
-
-        [Route("UpdateShow")]
-        [HttpPut]
-        public ActionResult<ShowDto> UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto)
-        {
-            if (ModelState.IsValid)
-            {
-                var priest = _tourService.UpdateShow(id, tourId, showDto);
-
-                if (priest is null) return BadRequest();
-
-                return Ok(priest);
-            }
-            else
-            {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
-        [Route("ArchiveTour")]
-        [HttpPatch]
-        public ActionResult Archive(long id)
+        [HttpPut("{showId}")]
+        public async Task<ActionResult<ShowDto>> UpdateShow([FromQuery] long id, [FromQuery] long tourId, [FromBody] CreateOrUpdateShowDto showDto)
         {
-            _tourService.ArchiveTour(id);
-            return NoContent();
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var priest = await _tourService.UpdateShow(id, tourId, showDto);
+
+                if (priest is null)
+                    return BadRequest();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
-        [Route("DeleteTour")]
-        [HttpDelete]
-        public ActionResult Delete(long id)
+        [HttpPatch("{tourId}")]
+        public async Task<ActionResult> Archive([FromQuery] long id)
         {
-            _tourService.DeleteTour(id);
-            return NoContent();
+            try
+            {
+                bool result = await _tourService.ArchiveTour(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
-        [Route("DeleteShow")]
-        [HttpDelete]
-        public ActionResult DeleteShow(long id)
+        [HttpDelete("{tourId}")]
+        public async Task<ActionResult> Delete([FromQuery] long id)
         {
-            _tourService.DeleteShow(id);
-            return NoContent();
+            try
+            {
+                bool result = await _tourService.DeleteTour(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete("{showId}")]
+        public async Task<ActionResult> DeleteShow([FromQuery] long id)
+        {
+            try
+            {
+                bool result = await _tourService.DeleteShow(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
     }

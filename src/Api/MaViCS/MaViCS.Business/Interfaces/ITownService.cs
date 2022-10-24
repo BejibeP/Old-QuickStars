@@ -5,17 +5,17 @@ namespace MaViCS.Business.Interfaces
     public interface ITownService
     {
 
-        List<TownDto> GetTowns();
+        Task<IEnumerable<TownDto>> GetTowns();
 
-        TownDto? GetTownById(long id);
+        Task<TownDto?> GetTownById(long id);
 
-        TownDto? AddTown(CreateOrUpdateTownDto shrineDto);
+        Task<TownDto?> AddTown(CreateOrUpdateTownDto shrineDto);
 
-        TownDto? UpdateTown(long id, CreateOrUpdateTownDto shrineDto);
+        Task<TownDto?> UpdateTown(long id, CreateOrUpdateTownDto shrineDto);
 
-        bool ArchiveTown(long id);
+        Task<bool> ArchiveTown(long id);
 
-        bool DeleteTown(long id);
+        Task<bool> DeleteTown(long id);
 
     }
 }

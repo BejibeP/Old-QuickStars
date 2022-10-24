@@ -6,48 +6,54 @@ namespace MaViCS.Business.Services
 {
     public class TownService : ITownService
     {
-        public ITownRepository _townRepository;
+        public readonly ITownRepository _townRepository;
 
         public TownService(ITownRepository townRepository)
         {
             _townRepository = townRepository;
         }
 
-        public List<TownDto> GetTowns()
+        public async Task<IEnumerable<TownDto>> GetTowns()
         {
-            return _townRepository.GetTowns()
-                .Select(x => x.ToTownDto())
-                .ToList();
+            var towns = await _townRepository.GetTowns();
+
+            return towns.Select(x => x.ToTownDto()).ToList();
         }
 
-        public TownDto? GetTownById(long id)
+        public async Task<TownDto?> GetTownById(long id)
         {
-            return _townRepository.GetTownById(id)?.ToTownDto();
+            var town = await _townRepository.GetTownById(id);
+
+            return town?.ToTownDto();
         }
 
-        public TownDto? AddTown(CreateOrUpdateTownDto townDto)
+        public async Task<TownDto?> AddTown(CreateOrUpdateTownDto townDto)
         {
             var town = townDto.ToTown();
 
-            return _townRepository.AddTown(town)?.ToTownDto();
+            town = await _townRepository.AddTown(town);
+
+            return town?.ToTownDto();
         }
 
-        public TownDto? UpdateTown(long id, CreateOrUpdateTownDto townDto)
+        public async Task<TownDto?> UpdateTown(long id, CreateOrUpdateTownDto townDto)
         {
             var town = townDto.ToTown();
             town.Id = id;
 
-            return _townRepository.UpdateTown(town)?.ToTownDto();
+            town = await _townRepository.UpdateTown(town);
+
+            return town?.ToTownDto();
         }
 
-        public bool ArchiveTown(long id)
+        public async Task<bool> ArchiveTown(long id)
         {
-            return _townRepository.ArchiveTown(id);
+            return await _townRepository.ArchiveTown(id);
         }
 
-        public bool DeleteTown(long id)
+        public async Task<bool> DeleteTown(long id)
         {
-            return _townRepository.DeleteTown(id);
+            return await _townRepository.DeleteTown(id);
         }
 
     }

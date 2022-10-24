@@ -1,6 +1,7 @@
 ﻿using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaViCS.Domain.Repositories
 {
@@ -13,63 +14,63 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public List<Town> GetTowns(bool ignoreArchived = true)
+        public async Task<IEnumerable<Town>> GetTowns(bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Towns.ToList();
+                return await _databaseContext.Towns.ToListAsync();
 
-            return _databaseContext.Towns.Where(x => x.DeletedOn == null).ToList();
+            return await _databaseContext.Towns.Where(x => x.DeletedOn == null).ToListAsync();
         }
 
-        public Town? GetTownById(long id, bool ignoreArchived = true)
+        public async Task<Town?> GetTownById(long id, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Towns.FirstOrDefault(x => x.Id == id);
+                return await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id);
 
-            return _databaseContext.Towns.FirstOrDefault(x => x.Id == id && x.DeletedOn == null);
+            return await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
         }
 
-        public Town? AddTown(Town townn)
+        public async Task<Town?> AddTown(Town townn)
         {
-            var entry = _databaseContext.Towns.Add(townn);
-            _databaseContext.SaveChanges();
+            var entry = await _databaseContext.Towns.AddAsync(townn);
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public Town? UpdateTown(Town town)
+        public async Task<Town?> UpdateTown(Town town)
         {
-            bool isNotArchived = _databaseContext.Towns.Any(x => x.Id == town.Id & town.DeletedOn == null);
+            bool isNotArchived = await _databaseContext.Towns.AnyAsync(x => x.Id == town.Id & town.DeletedOn == null);
             if (isNotArchived) return null;
 
             var entry = _databaseContext.Towns.Update(town);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public bool ArchiveTown(long id)
+        public async Task<bool> ArchiveTown(long id)
         {
-            var town = _databaseContext.Towns.FirstOrDefault(x => x.Id == id);
+            var town = await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id);
 
             if (town is null || town.DeletedOn is not null) return false;
 
             town.DeletedOn = DateTime.Now;
 
             _databaseContext.Towns.Update(town);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }
 
-        public bool DeleteTown(long id)
+        public async Task<bool> DeleteTown(long id)
         {
-            var town = _databaseContext.Towns.FirstOrDefault(x => x.Id == id);
+            var town = await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id);
 
             if (town is null) return false;
 
             _databaseContext.Towns.Remove(town);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }

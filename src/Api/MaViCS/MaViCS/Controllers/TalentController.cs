@@ -1,5 +1,6 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
+using MaViCS.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaViCS.Controllers
@@ -8,7 +9,7 @@ namespace MaViCS.Controllers
     [ApiController]
     public class TalentController : ControllerBase
     {
-        private static ITalentService _talentService;
+        private readonly ITalentService _talentService;
 
         public TalentController(ITalentService talentService)
         {
@@ -16,66 +17,99 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<TalentDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<TalentDto>>> GetAll()
         {
-            return Ok(_talentService.GetTalents());
+            var talents = await _talentService.GetTalents();
+            return Ok(talents);
         }
 
-        [HttpGet]
-        public ActionResult<List<TalentDto>> GetById(long id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TalentDto>> GetById([FromQuery] long id)
         {
-            var talent = _talentService.GetTalentById(id);
-            if (talent is null) return NotFound();
+            var talent = await _talentService.GetTalentById(id);
+
+            if (talent is null)
+                return NotFound();
 
             return Ok(talent);
         }
 
         [HttpPost]
-        public ActionResult<TalentDto> Create(CreateTalentDto talentDto)
+        public async Task<ActionResult<TalentDto>> Create([FromBody] CreateTalentDto talentDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var talent = _talentService.AddTalent(talentDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (talent is null) return BadRequest();
+                var talent = await _talentService.AddTalent(talentDto);
+
+                if (talent is null)
+                    return BadRequest();
 
                 return Ok(talent);
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
         [HttpPut]
-        public ActionResult<TalentDto> Update(long id, UpdateTalentDto talentDto)
+        public async Task<ActionResult<TalentDto>> Update([FromQuery] long id, [FromBody] UpdateTalentDto talentDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var talent = _talentService.UpdateTalent(id, talentDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (talent is null) return BadRequest();
+                var talent = await _talentService.UpdateTalent(id, talentDto);
 
-                return Ok(talent);
+                if (talent is null)
+                    return BadRequest();
+
+                return NoContent();
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
         [HttpPatch]
-        public ActionResult Archive(long id)
+        public async Task<ActionResult> Archive([FromQuery] long id)
         {
-            _talentService.ArchiveTalent(id);
-            return NoContent();
+            try
+            {
+                bool result = await _talentService.ArchiveTalent(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id)
+        public async Task<ActionResult> Delete([FromQuery] long id)
         {
-            _talentService.DeleteTalent(id);
-            return NoContent();
+            try
+            {
+                bool result = await _talentService.DeleteTalent(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
     }

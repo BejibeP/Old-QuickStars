@@ -1,13 +1,14 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
 using MaViCS.Domain.Interfaces;
+using MaViCS.Domain.Models;
 
 namespace MaViCS.Business.Services
 {
     public class TourService : ITourService
     {
-        public ITourRepository _tourRepository;
-        public IShowRepository _showRepository;
+        public readonly ITourRepository _tourRepository;
+        public readonly IShowRepository _showRepository;
 
         public TourService(ITourRepository tourRepository, IShowRepository showRepository)
         {
@@ -15,77 +16,87 @@ namespace MaViCS.Business.Services
             _showRepository = showRepository;
         }
 
-        public List<TourDto> GetTours()
+        public async Task<IEnumerable<TourDto>> GetTours()
         {
-            return _tourRepository.GetTours()
-                .Select(x => x.ToTourDto())
-                .ToList();
+            var tours = await _tourRepository.GetTours();
+
+            return tours.Select(x => x.ToTourDto()).ToList();
         }
 
-        public List<TourDto> GetToursByTalent(long talentId)
+        public async Task<IEnumerable<TourDto>> GetToursByTalent(long talentId)
         {
-            return _tourRepository.GetToursByTalent(talentId)
-                .Select(x => x.ToTourDto())
-                .ToList();
+            var tours = await _tourRepository.GetToursByTalent(talentId);
+
+            return tours.Select(x => x.ToTourDto()).ToList();
         }
 
-        public IOrderedEnumerable<ShowDto> GetShowsByTour(long tourId)
+        public async Task<IOrderedEnumerable<ShowDto>> GetShowsByTour(long tourId)
         {
-            return _showRepository.GetShowsByTour(tourId)
-                .Select(x => x.ToShowDto())
-                .OrderBy(x => x.Date);
+            var shows = await _showRepository.GetShowsByTour(tourId);
+
+            return shows.Select(x => x.ToShowDto()).OrderBy(x => x.Date);
         }
 
-        public TourDto? GetTourById(long id)
+        public async Task<TourDto?> GetTourById(long id)
         {
-            return _tourRepository.GetTourById(id)?.ToTourDto();
+            var tour = await _tourRepository.GetTourById(id);
+
+            return tour?.ToTourDto();
         }
 
-        public TourDto? AddTour(CreateOrUpdateTourDto tourDto)
+        public async Task<TourDto?> AddTour(CreateOrUpdateTourDto tourDto)
         {
             var tour = tourDto.ToTour();
 
-            return _tourRepository.AddTour(tour)?.ToTourDto();
+            tour = await _tourRepository.AddTour(tour);
+
+            return tour?.ToTourDto();
         }
 
-        public TourDto? UpdateTour(long id, CreateOrUpdateTourDto tourDto)
+        public async Task<TourDto?> UpdateTour(long id, CreateOrUpdateTourDto tourDto)
         {
             var tour = tourDto.ToTour();
             tour.Id = id;
 
-            return _tourRepository.UpdateTour(tour)?.ToTourDto();
+            tour = await _tourRepository.UpdateTour(tour);
+
+            return tour?.ToTourDto();
         }
 
-        public ShowDto? AddShow(long tourId, CreateOrUpdateShowDto showDto)
+        public async Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto)
         {
             var show = showDto.ToShow();
             show.TourId = tourId;
 
-            return _showRepository.AddShow(show)?.ToShowDto();
+            show = await _showRepository.AddShow(show);
+
+            return show?.ToShowDto();
         }
 
-        public ShowDto? UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto)
+        public async Task<ShowDto?> UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto)
         {
             var show = showDto.ToShow();
             show.Id = id;
             show.TourId = tourId;
 
-            return _showRepository.AddShow(show)?.ToShowDto();
+            show = await _showRepository.AddShow(show);
+
+            return show?.ToShowDto();
         }
 
-        public bool ArchiveTour(long id)
+        public async Task<bool> ArchiveTour(long id)
         {
-            return _tourRepository.ArchiveTour(id);
+            return await _tourRepository.ArchiveTour(id);
         }
 
-        public bool DeleteTour(long id)
+        public async Task<bool> DeleteTour(long id)
         {
-            return _tourRepository.DeleteTour(id);
+            return await _tourRepository.DeleteTour(id);
         }
 
-        public bool DeleteShow(long id)
+        public async Task<bool> DeleteShow(long id)
         {
-            return _showRepository.DeleteShow(id);
+            return await _showRepository.DeleteShow(id);
         }
 
     }

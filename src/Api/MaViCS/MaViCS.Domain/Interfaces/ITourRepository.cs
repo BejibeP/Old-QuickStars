@@ -5,19 +5,19 @@ namespace MaViCS.Domain.Interfaces
     public interface ITourRepository
     {
 
-        List<Tour> GetTours(bool ignoreArchived = true);
+        Task<IEnumerable<Tour>> GetTours(bool ignoreArchived = true);
 
-        List<Tour> GetToursByTalent(long talentId, bool ignoreArchived = true);
+        Task<IEnumerable<Tour>> GetToursByTalent(long talentId, bool ignoreArchived = true);
 
-        Tour? GetTourById(long id, bool ignoreArchived = true);
+        Task<Tour?> GetTourById(long id, bool ignoreArchived = true);
 
-        Tour? AddTour(Tour tour);
+        Task<Tour?> AddTour(Tour tour);
 
-        Tour? UpdateTour(Tour tour);
+        Task<Tour?> UpdateTour(Tour tour);
 
-        bool ArchiveTour(long id);
+        Task<bool> ArchiveTour(long id);
 
-        bool DeleteTour(long id);
+        Task<bool> DeleteTour(long id);
 
     }
 }

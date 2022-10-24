@@ -1,6 +1,7 @@
 ﻿using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaViCS.Domain.Repositories
 {
@@ -13,71 +14,71 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public List<Tour> GetTours(bool ignoreArchived = true)
+        public async Task<IEnumerable<Tour>> GetTours(bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Tours.ToList();
+                return await _databaseContext.Tours.ToListAsync();
 
-            return _databaseContext.Tours.Where(x => x.DeletedOn == null).ToList();
+            return await _databaseContext.Tours.Where(x => x.DeletedOn == null).ToListAsync();
         }
 
-        public List<Tour> GetToursByTalent(long talentId, bool ignoreArchived = true)
+        public async Task<IEnumerable<Tour>> GetToursByTalent(long talentId, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Tours.Where(x => x.TalentId == talentId).ToList();
+                return await _databaseContext.Tours.Where(x => x.TalentId == talentId).ToListAsync();
 
-            return _databaseContext.Tours.Where(x => x.TalentId == talentId && x.DeletedOn == null).ToList();
+            return await _databaseContext.Tours.Where(x => x.TalentId == talentId && x.DeletedOn == null).ToListAsync();
         }
 
-        public Tour? GetTourById(long id, bool ignoreArchived = true)
+        public async Task<Tour?> GetTourById(long id, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Tours.FirstOrDefault(x => x.Id == id);
+                return await _databaseContext.Tours.FirstOrDefaultAsync(x => x.Id == id);
 
-            return _databaseContext.Tours.FirstOrDefault(x => x.Id == id && x.DeletedOn == null);
+            return await _databaseContext.Tours.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
         }
 
-        public Tour? AddTour(Tour tour)
+        public async Task<Tour?> AddTour(Tour tour)
         {
-            var entry = _databaseContext.Tours.Add(tour);
-            _databaseContext.SaveChanges();
+            var entry = await _databaseContext.Tours.AddAsync(tour);
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public Tour? UpdateTour(Tour tour)
+        public async Task<Tour?> UpdateTour(Tour tour)
         {
-            bool isNotArchived = _databaseContext.Tours.Any(x => x.Id == tour.Id & tour.DeletedOn == null);
+            bool isNotArchived = await _databaseContext.Tours.AnyAsync(x => x.Id == tour.Id & tour.DeletedOn == null);
             if (isNotArchived) return null;
 
             var entry = _databaseContext.Tours.Update(tour);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public bool ArchiveTour(long id)
+        public async Task<bool> ArchiveTour(long id)
         {
-            var tour = _databaseContext.Tours.FirstOrDefault(x => x.Id == id);
+            var tour = await _databaseContext.Tours.FirstOrDefaultAsync(x => x.Id == id);
 
             if (tour is null || tour.DeletedOn is not null) return false;
 
             tour.DeletedOn = DateTime.Now;
 
             _databaseContext.Tours.Update(tour);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }
 
-        public bool DeleteTour(long id)
+        public async Task<bool> DeleteTour(long id)
         {
-            var tour = _databaseContext.Tours.FirstOrDefault(x => x.Id == id);
+            var tour = await _databaseContext.Tours.FirstOrDefaultAsync(x => x.Id == id);
 
             if (tour is null) return false;
 
             _databaseContext.Tours.Remove(tour);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }

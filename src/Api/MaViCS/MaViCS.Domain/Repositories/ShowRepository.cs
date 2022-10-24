@@ -1,6 +1,7 @@
 ﻿using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaViCS.Domain.Repositories
 {
@@ -13,71 +14,71 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public List<Show> GetShows(bool ignoreArchived = true)
+        public async Task<IEnumerable<Show>> GetShows(bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Shows.ToList();
+                return await _databaseContext.Shows.ToListAsync();
 
-            return _databaseContext.Shows.Where(x => x.DeletedOn == null).ToList();
+            return await _databaseContext.Shows.Where(x => x.DeletedOn == null).ToListAsync();
         }
 
-        public List<Show> GetShowsByTour(long tourId, bool ignoreArchived = true)
+        public async Task<IEnumerable<Show>> GetShowsByTour(long tourId, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Shows.Where(x => x.TourId == tourId).ToList();
+                return await _databaseContext.Shows.Where(x => x.TourId == tourId).ToListAsync();
 
-            return _databaseContext.Shows.Where(x => x.TourId == tourId && x.DeletedOn == null).ToList();
+            return await _databaseContext.Shows.Where(x => x.TourId == tourId && x.DeletedOn == null).ToListAsync();
         }
 
-        public Show? GetShowById(long id, bool ignoreArchived = true)
+        public async Task<Show?> GetShowById(long id, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Shows.FirstOrDefault(x => x.Id == id);
+                return await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id);
 
-            return _databaseContext.Shows.FirstOrDefault(x => x.Id == id && x.DeletedOn == null);
+            return await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
         }
 
-        public Show? AddShow(Show show)
+        public async Task<Show?> AddShow(Show show)
         {
-            var entry = _databaseContext.Shows.Add(show);
-            _databaseContext.SaveChanges();
+            var entry = await _databaseContext.Shows.AddAsync(show);
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public Show? UpdateShow(Show show)
+        public async Task<Show?> UpdateShow(Show show)
         {
-            bool isNotArchived = _databaseContext.Shows.Any(x => x.Id == show.Id & show.DeletedOn == null);
+            bool isNotArchived = await _databaseContext.Shows.AnyAsync(x => x.Id == show.Id & show.DeletedOn == null);
             if (isNotArchived) return null;
 
             var entry = _databaseContext.Shows.Update(show);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public bool ArchiveShow(long id)
+        public async Task<bool> ArchiveShow(long id)
         {
-            var show = _databaseContext.Shows.FirstOrDefault(x => x.Id == id);
+            var show = await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id);
 
             if (show is null || show.DeletedOn is not null) return false;
 
             show.DeletedOn = DateTime.Now;
 
             _databaseContext.Shows.Update(show);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }
 
-        public bool DeleteShow(long id)
+        public async Task<bool> DeleteShow(long id)
         {
-            var show = _databaseContext.Shows.FirstOrDefault(x => x.Id == id);
+            var show = await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id);
 
             if (show is null) return false;
 
             _databaseContext.Shows.Remove(show);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }

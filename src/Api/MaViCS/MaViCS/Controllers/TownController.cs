@@ -8,7 +8,7 @@ namespace MaViCS.Controllers
     [ApiController]
     public class TownController : ControllerBase
     {
-        private static ITownService _townService;
+        private readonly ITownService _townService;
 
         public TownController(ITownService townService)
         {
@@ -16,66 +16,99 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<TownDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<TownDto>>> GetAll()
         {
-            return Ok(_townService.GetTowns());
+            var towns = await _townService.GetTowns();
+            return Ok(towns);
         }
 
-        [HttpGet]
-        public ActionResult<List<TownDto>> GetById(long id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TownDto>> GetById([FromQuery] long id)
         {
-            var town = _townService.GetTownById(id);
-            if (town is null) return NotFound();
+            var town = await _townService.GetTownById(id);
+
+            if (town is null)
+                return NotFound();
 
             return Ok(town);
         }
 
         [HttpPost]
-        public ActionResult<TownDto> Create(CreateOrUpdateTownDto townDto)
+        public async Task<ActionResult<TownDto>> Create([FromBody] CreateOrUpdateTownDto townDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var town = _townService.AddTown(townDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (town is null) return BadRequest();
+                var town = await _townService.AddTown(townDto);
+
+                if (town is null)
+                    return BadRequest();
 
                 return Ok(town);
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
         [HttpPut]
-        public ActionResult<TownDto> Update(long id, CreateOrUpdateTownDto shrineDto)
+        public async Task<ActionResult<TownDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateTownDto shrineDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var town = _townService.UpdateTown(id, shrineDto);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                if (town is null) return BadRequest();
+                var town = await _townService.UpdateTown(id, shrineDto);
 
-                return Ok(town);
+                if (town is null)
+                    return NotFound();
+
+                return NoContent();
             }
-            else
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
         }
 
         [HttpPatch]
-        public ActionResult Archive(long id)
+        public async Task<ActionResult> Archive([FromQuery] long id)
         {
-            _townService.ArchiveTown(id);
-            return NoContent();
+            try
+            {
+                bool result = await _townService.ArchiveTown(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id) 
+        public async Task<ActionResult> Delete([FromQuery] long id)
         {
-            _townService.DeleteTown(id);
-            return NoContent();
+            try
+            {
+                bool result = await _townService.DeleteTown(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
     }

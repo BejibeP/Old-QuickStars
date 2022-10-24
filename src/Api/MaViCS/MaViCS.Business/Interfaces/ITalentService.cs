@@ -5,17 +5,17 @@ namespace MaViCS.Business.Interfaces
     public interface ITalentService
     {
 
-        List<TalentDto> GetTalents();
+        Task<IEnumerable<TalentDto>> GetTalents();
 
-        TalentDto? GetTalentById(long id);
+        Task<TalentDto?> GetTalentById(long id);
 
-        TalentDto? AddTalent(CreateTalentDto talentDto);
+        Task<TalentDto?> AddTalent(CreateTalentDto talentDto);
 
-        TalentDto? UpdateTalent(long id, UpdateTalentDto talentDto);
+        Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto);
 
-        bool ArchiveTalent(long id);
+        Task<bool> ArchiveTalent(long id);
 
-        bool DeleteTalent(long id);
+        Task<bool> DeleteTalent(long id);
 
     }
 }

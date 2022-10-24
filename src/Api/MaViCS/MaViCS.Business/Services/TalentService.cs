@@ -6,48 +6,54 @@ namespace MaViCS.Business.Services
 {
     public class TalentService : ITalentService
     {
-        public ITalentRepository _talentRepository;
+        public readonly ITalentRepository _talentRepository;
 
         public TalentService(ITalentRepository talentRepository)
         {
             _talentRepository = talentRepository;
         }
 
-        public List<TalentDto> GetTalents()
+        public async Task<IEnumerable<TalentDto>> GetTalents()
         {
-            return _talentRepository.GetTalents()
-                .Select(x => x.ToTalentDto())
-                .ToList();
+            var talents = await _talentRepository.GetTalents();
+
+            return talents.Select(x => x.ToTalentDto()).ToList();
         }
 
-        public TalentDto? GetTalentById(long id)
+        public async Task<TalentDto?> GetTalentById(long id)
         {
-            return _talentRepository.GetTalentById(id)?.ToTalentDto();
+            var talent = await _talentRepository.GetTalentById(id);
+
+            return talent?.ToTalentDto();
         }
 
-        public TalentDto? AddTalent(CreateTalentDto talentDto)
+        public async Task<TalentDto?> AddTalent(CreateTalentDto talentDto)
         {
             var talent = talentDto.ToTalent();
 
-            return _talentRepository.AddTalent(talent)?.ToTalentDto();
+            talent = await _talentRepository.AddTalent(talent);
+
+            return talent?.ToTalentDto();
         }
 
-        public TalentDto? UpdateTalent(long id, UpdateTalentDto talentDto)
+        public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
             var talent = talentDto.ToTalent();
             talent.Id = id;
 
-            return _talentRepository.UpdateTalent(talent)?.ToTalentDto();
+            talent = await _talentRepository.UpdateTalent(talent);
+
+            return talent?.ToTalentDto();
         }
 
-        public bool ArchiveTalent(long id)
+        public async Task<bool> ArchiveTalent(long id)
         {
-            return _talentRepository.ArchiveTalent(id);
+            return await _talentRepository.ArchiveTalent(id);
         }
 
-        public bool DeleteTalent(long id)
+        public async Task<bool> DeleteTalent(long id)
         {
-            return _talentRepository.DeleteTalent(id);
+            return await _talentRepository.DeleteTalent(id);
         }
 
     }

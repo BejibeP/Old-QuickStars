@@ -1,6 +1,7 @@
 ﻿using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaViCS.Domain.Repositories
 {
@@ -13,63 +14,63 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public List<Talent> GetTalents(bool ignoreArchived = true)
+        public async Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Talents.ToList();
+                return await _databaseContext.Talents.ToListAsync();
 
-            return _databaseContext.Talents.Where(x => x.DeletedOn == null).ToList();
+            return await _databaseContext.Talents.Where(x => x.DeletedOn == null).ToListAsync();
         }
 
-        public Talent? GetTalentById(long id, bool ignoreArchived = true)
+        public async Task<Talent?> GetTalentById(long id, bool ignoreArchived = true)
         {
             if (!ignoreArchived)
-                return _databaseContext.Talents.FirstOrDefault(x => x.Id == id);
+                return await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id);
 
-            return _databaseContext.Talents.FirstOrDefault(x => x.Id == id && x.DeletedOn == null);
+            return await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
         }
 
-        public Talent? AddTalent(Talent talent)
+        public async Task<Talent?> AddTalent(Talent talent)
         {
-            var entry = _databaseContext.Talents.Add(talent);
-            _databaseContext.SaveChanges();
+            var entry = await _databaseContext.Talents.AddAsync(talent);
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public Talent? UpdateTalent(Talent talent)
+        public async Task<Talent?> UpdateTalent(Talent talent)
         {
-            bool isNotArchived = _databaseContext.Talents.Any(x => x.Id == talent.Id & talent.DeletedOn == null);
+            bool isNotArchived = await _databaseContext.Talents.AnyAsync(x => x.Id == talent.Id & talent.DeletedOn == null);
             if (isNotArchived) return null;
 
             var entry = _databaseContext.Talents.Update(talent);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
         }
 
-        public bool ArchiveTalent(long id)
+        public async Task<bool> ArchiveTalent(long id)
         {
-            var talent = _databaseContext.Talents.FirstOrDefault(x => x.Id == id);
+            var talent = await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id);
 
             if (talent is null || talent.DeletedOn is not null) return false;
 
             talent.DeletedOn = DateTime.Now;
 
             _databaseContext.Talents.Update(talent);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }
 
-        public bool DeleteTalent(long id)
+        public async Task<bool> DeleteTalent(long id)
         {
-            var talent = _databaseContext.Talents.FirstOrDefault(x => x.Id == id);
+            var talent = await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id);
 
             if (talent is null) return false;
 
             _databaseContext.Talents.Remove(talent);
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
 
             return true;
         }
