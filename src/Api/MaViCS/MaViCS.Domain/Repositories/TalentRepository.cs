@@ -32,6 +32,8 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Talent?> AddTalent(Talent talent)
         {
+            talent.CreatedOn = DateTime.UtcNow;
+
             var entry = await _databaseContext.Talents.AddAsync(talent);
             await _databaseContext.SaveChangesAsync();
 
@@ -40,8 +42,7 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Talent?> UpdateTalent(Talent talent)
         {
-            bool isNotArchived = await _databaseContext.Talents.AnyAsync(x => x.Id == talent.Id & talent.DeletedOn == null);
-            if (isNotArchived) return null;
+            talent.ModifiedOn = DateTime.UtcNow;
 
             var entry = _databaseContext.Talents.Update(talent);
             await _databaseContext.SaveChangesAsync();
@@ -55,7 +56,7 @@ namespace MaViCS.Domain.Repositories
 
             if (talent is null || talent.DeletedOn is not null) return false;
 
-            talent.DeletedOn = DateTime.Now;
+            talent.DeletedOn = DateTime.UtcNow;
 
             _databaseContext.Talents.Update(talent);
             await _databaseContext.SaveChangesAsync();

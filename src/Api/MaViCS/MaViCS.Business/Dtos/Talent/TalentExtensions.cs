@@ -16,12 +16,10 @@ namespace MaViCS.Business.Dtos
             };
         }
 
-        public static Talent ToTalent(this UpdateTalentDto dto)
+        public static Talent UpdateTalent(this Talent talent, UpdateTalentDto dto)
         {
-            return new Talent()
-            {
-                Title = dto.Title
-            };
+            talent.Title = dto.Title;
+            return talent;
         }
 
         public static TalentDto ToTalentDto(this Talent talent)

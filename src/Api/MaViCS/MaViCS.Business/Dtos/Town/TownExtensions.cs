@@ -17,6 +17,16 @@ namespace MaViCS.Business.Dtos
             };
         }
 
+        public static Town UpdateTown(this Town town, CreateOrUpdateTownDto dto)
+        {
+            town.Name = dto.Name;
+            town.Region = dto.Region;
+            town.Description = dto.Description;
+            town.Latitude = dto.Latitude;
+            town.Longitude = dto.Longitude;
+            return town;
+        }
+
         public static TownDto ToTownDto(this Town town)
         {
             return new TownDto()

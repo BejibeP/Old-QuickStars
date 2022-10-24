@@ -4,12 +4,12 @@
     {
 
         public long TourId { get; set; }
-        public virtual Tour Tour { get; set; }
+        public virtual Tour Tour { get; }
 
         public DateTime Date { get; set; }
 
-        public long LocationId { get; set; }
-        public virtual Town Location { get; set; }
+        public long? LocationId { get; set; }
+        public virtual Town? Location { get; }
 
     }
 }

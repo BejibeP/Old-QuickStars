@@ -40,6 +40,8 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Tour?> AddTour(Tour tour)
         {
+            tour.CreatedOn = DateTime.UtcNow;
+
             var entry = await _databaseContext.Tours.AddAsync(tour);
             await _databaseContext.SaveChangesAsync();
 
@@ -48,8 +50,7 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Tour?> UpdateTour(Tour tour)
         {
-            bool isNotArchived = await _databaseContext.Tours.AnyAsync(x => x.Id == tour.Id & tour.DeletedOn == null);
-            if (isNotArchived) return null;
+            tour.ModifiedOn = DateTime.UtcNow;
 
             var entry = _databaseContext.Tours.Update(tour);
             await _databaseContext.SaveChangesAsync();
@@ -63,7 +64,7 @@ namespace MaViCS.Domain.Repositories
 
             if (tour is null || tour.DeletedOn is not null) return false;
 
-            tour.DeletedOn = DateTime.Now;
+            tour.DeletedOn = DateTime.UtcNow;
 
             _databaseContext.Tours.Update(tour);
             await _databaseContext.SaveChangesAsync();

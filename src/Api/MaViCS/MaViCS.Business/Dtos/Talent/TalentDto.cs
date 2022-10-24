@@ -9,9 +9,9 @@
 
         public string Surname { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public virtual TownDto HomeTown { get; set; }
+        public virtual TownDto? HomeTown { get; set; }
 
     }
 }

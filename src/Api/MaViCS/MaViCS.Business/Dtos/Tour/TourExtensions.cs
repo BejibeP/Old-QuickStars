@@ -10,8 +10,19 @@ namespace MaViCS.Business.Dtos
             return new Tour()
             {
                 TalentId = dto.TalentId,
+                Name = dto.Name,
+                Description = dto.Description,
                 StartedOn = dto.StartedOn
             };
+        }
+
+        public static Tour UpdateTour(this Tour tour, CreateOrUpdateTourDto dto)
+        {
+            tour.TalentId = dto.TalentId;
+            tour.Name = dto.Name;
+            tour.Description = dto.Description;
+            tour.StartedOn = dto.StartedOn;
+            return tour;
         }
 
         public static TourDto ToTourDto(this Tour tour)
@@ -19,6 +30,8 @@ namespace MaViCS.Business.Dtos
             TourDto result = new TourDto()
             {
                 Id = tour.Id,
+                Name = tour.Name,
+                Description = tour.Description,
                 StartedOn = tour.StartedOn,
             };
 
@@ -38,6 +51,13 @@ namespace MaViCS.Business.Dtos
                 Date = dto.Date,
                 LocationId = dto.LocationId
             };
+        }
+
+        public static Show UpdateShow(this Show show, CreateOrUpdateShowDto dto)
+        {
+            show.Date = dto.Date;
+            show.LocationId = dto.LocationId;
+            return show;
         }
 
         public static ShowDto ToShowDto(this Show show)

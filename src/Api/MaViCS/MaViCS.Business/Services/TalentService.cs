@@ -1,6 +1,7 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
 using MaViCS.Domain.Interfaces;
+using MaViCS.Domain.Repositories;
 
 namespace MaViCS.Business.Services
 {
@@ -38,11 +39,14 @@ namespace MaViCS.Business.Services
 
         public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
-            var talent = talentDto.ToTalent();
-            talent.Id = id;
+            var talent = await _talentRepository.GetTalentById(id);
+
+            if (talent == null)
+                return null;
+
+            talent = talent.UpdateTalent(talentDto);
 
             talent = await _talentRepository.UpdateTalent(talent);
-
             return talent?.ToTalentDto();
         }
 

@@ -40,6 +40,8 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Show?> AddShow(Show show)
         {
+            show.CreatedOn = DateTime.UtcNow;
+
             var entry = await _databaseContext.Shows.AddAsync(show);
             await _databaseContext.SaveChangesAsync();
 
@@ -48,8 +50,7 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Show?> UpdateShow(Show show)
         {
-            bool isNotArchived = await _databaseContext.Shows.AnyAsync(x => x.Id == show.Id & show.DeletedOn == null);
-            if (isNotArchived) return null;
+            show.ModifiedOn = DateTime.UtcNow;
 
             var entry = _databaseContext.Shows.Update(show);
             await _databaseContext.SaveChangesAsync();
@@ -63,7 +64,7 @@ namespace MaViCS.Domain.Repositories
 
             if (show is null || show.DeletedOn is not null) return false;
 
-            show.DeletedOn = DateTime.Now;
+            show.DeletedOn = DateTime.UtcNow;
 
             _databaseContext.Shows.Update(show);
             await _databaseContext.SaveChangesAsync();

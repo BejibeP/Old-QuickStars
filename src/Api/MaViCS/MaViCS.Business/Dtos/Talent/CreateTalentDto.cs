@@ -7,9 +7,9 @@
 
         public string Surname { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public long HomeTownId { get; set; }
+        public long? HomeTownId { get; set; }
 
     }
 }

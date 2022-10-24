@@ -30,9 +30,11 @@ namespace MaViCS.Domain.Repositories
             return await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
         }
 
-        public async Task<Town?> AddTown(Town townn)
+        public async Task<Town?> AddTown(Town town)
         {
-            var entry = await _databaseContext.Towns.AddAsync(townn);
+            town.CreatedOn = DateTime.UtcNow;
+
+            var entry = await _databaseContext.Towns.AddAsync(town);
             await _databaseContext.SaveChangesAsync();
 
             return entry.Entity;
@@ -40,8 +42,7 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<Town?> UpdateTown(Town town)
         {
-            bool isNotArchived = await _databaseContext.Towns.AnyAsync(x => x.Id == town.Id & town.DeletedOn == null);
-            if (isNotArchived) return null;
+            town.ModifiedOn = DateTime.UtcNow;
 
             var entry = _databaseContext.Towns.Update(town);
             await _databaseContext.SaveChangesAsync();
@@ -55,7 +56,7 @@ namespace MaViCS.Domain.Repositories
 
             if (town is null || town.DeletedOn is not null) return false;
 
-            town.DeletedOn = DateTime.Now;
+            town.DeletedOn = DateTime.UtcNow;
 
             _databaseContext.Towns.Update(town);
             await _databaseContext.SaveChangesAsync();

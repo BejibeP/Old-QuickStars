@@ -38,8 +38,12 @@ namespace MaViCS.Business.Services
 
         public async Task<TownDto?> UpdateTown(long id, CreateOrUpdateTownDto townDto)
         {
-            var town = townDto.ToTown();
-            town.Id = id;
+            var town = await _townRepository.GetTownById(id);
+
+            if (town == null)
+                return null;
+
+            town = town.UpdateTown(townDto);
 
             town = await _townRepository.UpdateTown(town);
 

@@ -24,21 +24,21 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet("{talentId}")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetByTalents([FromQuery] long talentId)
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetByTalents(long talentId)
         {
             var tours = await _tourService.GetToursByTalent(talentId);
             return Ok(tours);
         }
 
         [HttpGet("{tourId}")]
-        public async Task<ActionResult<IOrderedEnumerable<ShowDto>>> GetByTour([FromQuery] long tourId)
+        public async Task<ActionResult<IOrderedEnumerable<ShowDto>>> GetByTour(long tourId)
         {
             var shows = await _tourService.GetShowsByTour(tourId);
             return Ok(shows);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TourDto>> GetById([FromQuery] long id)
+        public async Task<ActionResult<TourDto>> GetById(long id)
         {
             var tour = await _tourService.GetTourById(id);
 
@@ -70,7 +70,7 @@ namespace MaViCS.Controllers
         }
 
         [HttpPost("{tourId}")]
-        public async Task<ActionResult<ShowDto>> CreateShow([FromQuery] long tourId, [FromBody] CreateOrUpdateShowDto showDto)
+        public async Task<ActionResult<ShowDto>> CreateShow(long tourId, [FromBody] CreateOrUpdateShowDto showDto)
         {
             try
             {
@@ -91,14 +91,14 @@ namespace MaViCS.Controllers
         }
 
         [HttpPut("{tourId}")]
-        public async Task<ActionResult<TourDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateTourDto tourDto)
+        public async Task<ActionResult<TourDto>> Update(long tourId, [FromBody] CreateOrUpdateTourDto tourDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var tour = await _tourService.UpdateTour(id, tourDto);
+                var tour = await _tourService.UpdateTour(tourId, tourDto);
 
                 if (tour is null)
                     return BadRequest();
@@ -111,17 +111,17 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpPut("{showId}")]
-        public async Task<ActionResult<ShowDto>> UpdateShow([FromQuery] long id, [FromQuery] long tourId, [FromBody] CreateOrUpdateShowDto showDto)
+        [HttpPut("Show/{showId}")]
+        public async Task<ActionResult<ShowDto>> UpdateShow(long showId, [FromBody] CreateOrUpdateShowDto showDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var priest = await _tourService.UpdateShow(id, tourId, showDto);
+                var show = await _tourService.UpdateShow(showId, showDto);
 
-                if (priest is null)
+                if (show is null)
                     return BadRequest();
 
                 return NoContent();
@@ -133,11 +133,11 @@ namespace MaViCS.Controllers
         }
 
         [HttpPatch("{tourId}")]
-        public async Task<ActionResult> Archive([FromQuery] long id)
+        public async Task<ActionResult> Archive(long tourId)
         {
             try
             {
-                bool result = await _tourService.ArchiveTour(id);
+                bool result = await _tourService.ArchiveTour(tourId);
 
                 if (!result)
                     return NotFound();
@@ -151,11 +151,11 @@ namespace MaViCS.Controllers
         }
 
         [HttpDelete("{tourId}")]
-        public async Task<ActionResult> Delete([FromQuery] long id)
+        public async Task<ActionResult> Delete(long tourId)
         {
             try
             {
-                bool result = await _tourService.DeleteTour(id);
+                bool result = await _tourService.DeleteTour(tourId);
 
                 if (!result)
                     return NotFound();
@@ -169,11 +169,11 @@ namespace MaViCS.Controllers
         }
 
         [HttpDelete("{showId}")]
-        public async Task<ActionResult> DeleteShow([FromQuery] long id)
+        public async Task<ActionResult> DeleteShow(long showId)
         {
             try
             {
-                bool result = await _tourService.DeleteShow(id);
+                bool result = await _tourService.DeleteShow(showId);
 
                 if (!result)
                     return NotFound();

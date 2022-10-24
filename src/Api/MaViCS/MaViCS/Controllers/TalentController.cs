@@ -24,7 +24,7 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TalentDto>> GetById([FromQuery] long id)
+        public async Task<ActionResult<TalentDto>> GetById(long id)
         {
             var talent = await _talentService.GetTalentById(id);
 

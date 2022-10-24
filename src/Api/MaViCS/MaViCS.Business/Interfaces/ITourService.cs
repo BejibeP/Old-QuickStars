@@ -19,7 +19,7 @@ namespace MaViCS.Business.Interfaces
 
         Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto);
 
-        Task<ShowDto?> UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto);
+        Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto);
 
         Task<bool> ArchiveTour(long id);
 

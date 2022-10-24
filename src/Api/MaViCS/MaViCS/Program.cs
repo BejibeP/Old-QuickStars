@@ -16,8 +16,8 @@ namespace MaViCS
             // Add services to the container.
             builder.Services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseInMemoryDatabase("MaViCS");
-                //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                //options.UseInMemoryDatabase("MaViCS");
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             builder.Services.AddScoped<ITalentService, TalentService>();

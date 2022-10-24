@@ -7,6 +7,9 @@
 
         public TalentDto Talent { get; set; }
 
+        public string Name { get; set; }
+        public string? Description { get; set; }
+
         public DateTime StartedOn { get; set; }
 
         public List<ShowDto> Shows { get; set; }

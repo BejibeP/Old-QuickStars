@@ -2,6 +2,7 @@
 using MaViCS.Business.Interfaces;
 using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Models;
+using MaViCS.Domain.Repositories;
 
 namespace MaViCS.Business.Services
 {
@@ -55,32 +56,41 @@ namespace MaViCS.Business.Services
 
         public async Task<TourDto?> UpdateTour(long id, CreateOrUpdateTourDto tourDto)
         {
-            var tour = tourDto.ToTour();
-            tour.Id = id;
+            var tour = await _tourRepository.GetTourById(id);
+
+            if (tour == null)
+                return null;
+
+            tour = tour.UpdateTour(tourDto);
 
             tour = await _tourRepository.UpdateTour(tour);
-
             return tour?.ToTourDto();
         }
 
         public async Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto)
         {
+            var tour = await _tourRepository.GetTourById(tourId);
+
+            if (tour == null)
+                return null;
+
             var show = showDto.ToShow();
             show.TourId = tourId;
 
             show = await _showRepository.AddShow(show);
-
             return show?.ToShowDto();
         }
 
-        public async Task<ShowDto?> UpdateShow(long id, long tourId, CreateOrUpdateShowDto showDto)
+        public async Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto)
         {
-            var show = showDto.ToShow();
-            show.Id = id;
-            show.TourId = tourId;
+            var show = await _showRepository.GetShowById(showId);
+
+            if (show == null)
+                return null;
+
+            show = show.UpdateShow(showDto);
 
             show = await _showRepository.AddShow(show);
-
             return show?.ToShowDto();
         }
 

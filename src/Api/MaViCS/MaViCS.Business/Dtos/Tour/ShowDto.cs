@@ -9,7 +9,7 @@
 
         public DateTime Date { get; set; }
 
-        public virtual TownDto Location { get; set; }
+        public virtual TownDto? Location { get; set; }
 
     }
 }

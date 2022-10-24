@@ -5,7 +5,7 @@
 
         public DateTime Date { get; set; }
 
-        public long LocationId { get; set; }
+        public long? LocationId { get; set; }
 
     }
 }

@@ -23,7 +23,7 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TownDto>> GetById([FromQuery] long id)
+        public async Task<ActionResult<TownDto>> GetById(long id)
         {
             var town = await _townService.GetTownById(id);
 
@@ -55,14 +55,14 @@ namespace MaViCS.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<TownDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateTownDto shrineDto)
+        public async Task<ActionResult<TownDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateTownDto townDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var town = await _townService.UpdateTown(id, shrineDto);
+                var town = await _townService.UpdateTown(id, townDto);
 
                 if (town is null)
                     return NotFound();
