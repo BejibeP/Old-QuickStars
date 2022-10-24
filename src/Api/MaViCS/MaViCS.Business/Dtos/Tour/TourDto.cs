@@ -1,4 +1,6 @@
-﻿namespace MaViCS.Business.Dtos
+﻿using MaViCS.Business.Dtos;
+
+namespace MaViCS.Business.Dtos
 {
     public class TourDto
     {

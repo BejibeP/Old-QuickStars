@@ -30,13 +30,6 @@ namespace MaViCS.Controllers
             return Ok(tours);
         }
 
-        [HttpGet("{tourId}")]
-        public async Task<ActionResult<IOrderedEnumerable<ShowDto>>> GetByTour(long tourId)
-        {
-            var shows = await _tourService.GetShowsByTour(tourId);
-            return Ok(shows);
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<TourDto>> GetById(long id)
         {
@@ -69,29 +62,8 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpPost("{tourId}")]
-        public async Task<ActionResult<ShowDto>> CreateShow(long tourId, [FromBody] CreateOrUpdateShowDto showDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var show = await _tourService.AddShow(tourId, showDto);
-
-                if (show is null)
-                    return BadRequest();
-
-                return Ok(show);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPut("{tourId}")]
-        public async Task<ActionResult<TourDto>> Update(long tourId, [FromBody] CreateOrUpdateTourDto tourDto)
+        [HttpPut]
+        public async Task<ActionResult<TourDto>> Update([FromQuery] long tourId, [FromBody] CreateOrUpdateTourDto tourDto)
         {
             try
             {
@@ -111,29 +83,8 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpPut("Show/{showId}")]
-        public async Task<ActionResult<ShowDto>> UpdateShow(long showId, [FromBody] CreateOrUpdateShowDto showDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var show = await _tourService.UpdateShow(showId, showDto);
-
-                if (show is null)
-                    return BadRequest();
-
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPatch("{tourId}")]
-        public async Task<ActionResult> Archive(long tourId)
+        [HttpPatch]
+        public async Task<ActionResult> Archive([FromQuery] long tourId)
         {
             try
             {
@@ -150,30 +101,12 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpDelete("{tourId}")]
-        public async Task<ActionResult> Delete(long tourId)
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromQuery] long tourId)
         {
             try
             {
                 bool result = await _tourService.DeleteTour(tourId);
-
-                if (!result)
-                    return NotFound();
-
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpDelete("{showId}")]
-        public async Task<ActionResult> DeleteShow(long showId)
-        {
-            try
-            {
-                bool result = await _tourService.DeleteShow(showId);
 
                 if (!result)
                     return NotFound();
