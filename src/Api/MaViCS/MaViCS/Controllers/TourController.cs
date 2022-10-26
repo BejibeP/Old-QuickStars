@@ -23,8 +23,8 @@ namespace MaViCS.Controllers
             return Ok(tours);
         }
 
-        [HttpGet("{talentId}")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetByTalents(long talentId)
+        [HttpGet("GetByTalents")]
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetByTalents([FromQuery] long talentId)
         {
             var tours = await _tourService.GetToursByTalent(talentId);
             return Ok(tours);

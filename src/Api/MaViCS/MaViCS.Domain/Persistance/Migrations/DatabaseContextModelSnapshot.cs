@@ -31,10 +31,14 @@ namespace MaViCS.Domain.Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Application");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 25, DateTimeKind.Utc).AddTicks(6064));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -70,7 +74,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                         {
                             Id = 1L,
                             CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 24, 18, 5, 46, 316, DateTimeKind.Utc).AddTicks(5240),
+                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8486),
                             Date = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LocationId = 1L,
                             TourId = 1L
@@ -86,10 +90,14 @@ namespace MaViCS.Domain.Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Application");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 23, DateTimeKind.Utc).AddTicks(1416));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -128,7 +136,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                         {
                             Id = 1L,
                             CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 24, 18, 5, 46, 316, DateTimeKind.Utc).AddTicks(5208),
+                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8450),
                             HomeTownId = 1L,
                             Name = "Gura",
                             Surname = "Gawr",
@@ -145,10 +153,14 @@ namespace MaViCS.Domain.Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Application");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 24, DateTimeKind.Utc).AddTicks(3753));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -186,7 +198,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                         {
                             Id = 1L,
                             CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 24, 18, 5, 46, 316, DateTimeKind.Utc).AddTicks(5225),
+                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8468),
                             Name = "Shark First Concert",
                             StartedOn = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TalentId = 1L
@@ -202,10 +214,14 @@ namespace MaViCS.Domain.Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Application");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 23, DateTimeKind.Utc).AddTicks(317));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -246,7 +262,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                         {
                             Id = 1L,
                             CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 24, 18, 5, 46, 316, DateTimeKind.Utc).AddTicks(5077),
+                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8263),
                             Description = "A Sunken city",
                             Latitude = 0m,
                             Longitude = 0m,

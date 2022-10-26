@@ -5,9 +5,9 @@ namespace MaViCS.Domain.Interfaces
     public interface ITalentRepository
     {
 
-        Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true);
+        Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true, bool loadIncludes = true);
 
-        Task<Talent?> GetTalentById(long id, bool ignoreArchived = true);
+        Task<Talent?> GetTalentById(long id, bool ignoreArchived = true, bool loadIncludes = true);
 
         Task<Talent?> AddTalent(Talent talent);
 

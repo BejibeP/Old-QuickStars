@@ -39,7 +39,7 @@ namespace MaViCS.Business.Services
 
         public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
-            var talent = await _talentRepository.GetTalentById(id);
+            var talent = await _talentRepository.GetTalentById(id, true, false);
 
             if (talent == null)
                 return null;

@@ -47,7 +47,7 @@ namespace MaViCS.Business.Services
 
         public async Task<TourDto?> UpdateTour(long id, CreateOrUpdateTourDto tourDto)
         {
-            var tour = await _tourRepository.GetTourById(id);
+            var tour = await _tourRepository.GetTourById(id, true, false);
 
             if (tour == null)
                 return null;

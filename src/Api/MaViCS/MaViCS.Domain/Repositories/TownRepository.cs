@@ -16,18 +16,20 @@ namespace MaViCS.Domain.Repositories
 
         public async Task<IEnumerable<Town>> GetTowns(bool ignoreArchived = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Towns.ToListAsync();
+            IQueryable<Town> query = _databaseContext.Towns;
 
-            return await _databaseContext.Towns.Where(x => x.DeletedOn == null).ToListAsync();
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.ToListAsync();
         }
 
         public async Task<Town?> GetTownById(long id, bool ignoreArchived = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id);
+            IQueryable<Town> query = _databaseContext.Towns;
 
-            return await _databaseContext.Towns.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Town?> AddTown(Town town)

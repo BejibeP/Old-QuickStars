@@ -23,6 +23,7 @@ namespace MaViCS
             builder.Services.AddScoped<ITalentService, TalentService>();
             builder.Services.AddScoped<ITownService, TownService>();
             builder.Services.AddScoped<ITourService, TourService>();
+            builder.Services.AddScoped<IShowService, ShowService>();
 
             builder.Services.AddScoped<ITalentRepository, TalentRepository>();
             builder.Services.AddScoped<ITownRepository, TownRepository>();

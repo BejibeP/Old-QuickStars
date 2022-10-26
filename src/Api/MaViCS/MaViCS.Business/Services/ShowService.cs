@@ -26,7 +26,7 @@ namespace MaViCS.Business.Services
 
         public async Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto)
         {
-            var tour = await _tourRepository.GetTourById(tourId);
+            var tour = await _tourRepository.GetTourById(tourId, true, false);
 
             if (tour == null)
                 return null;
@@ -40,14 +40,14 @@ namespace MaViCS.Business.Services
 
         public async Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto)
         {
-            var show = await _showRepository.GetShowById(showId);
+            var show = await _showRepository.GetShowById(showId, true, false);
 
             if (show == null)
                 return null;
 
             show = show.UpdateShow(showDto);
 
-            show = await _showRepository.AddShow(show);
+            show = await _showRepository.UpdateShow(show);
             return show?.ToShowDto();
         }
 

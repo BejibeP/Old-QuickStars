@@ -5,11 +5,11 @@ namespace MaViCS.Domain.Interfaces
     public interface IShowRepository
     {
 
-        Task<IEnumerable<Show>> GetShows(bool ignoreArchived = true);
+        Task<IEnumerable<Show>> GetShows(bool ignoreArchived = true, bool loadIncludes = true);
 
-        Task<IEnumerable<Show>> GetShowsByTour(long tourId, bool ignoreArchived = true);
+        Task<IEnumerable<Show>> GetShowsByTour(long tourId, bool ignoreArchived = true, bool loadIncludes = true);
 
-        Task<Show?> GetShowById(long id, bool ignoreArchived = true);
+        Task<Show?> GetShowById(long id, bool ignoreArchived = true, bool loadIncludes = true);
 
         Task<Show?> AddShow(Show show);
 

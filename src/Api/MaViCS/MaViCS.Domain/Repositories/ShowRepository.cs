@@ -14,28 +14,46 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public async Task<IEnumerable<Show>> GetShows(bool ignoreArchived = true)
+        public async Task<IEnumerable<Show>> GetShows(bool ignoreArchived = true, bool loadIncludes = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Shows.ToListAsync();
+            IQueryable<Show> query = _databaseContext.Shows;
 
-            return await _databaseContext.Shows.Where(x => x.DeletedOn == null).ToListAsync();
+            if (loadIncludes)
+                query = query.Include(x => x.Location)
+                    .Include(x => x.Tour)
+                    .ThenInclude(x => x.Talent);
+
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<Show>> GetShowsByTour(long tourId, bool ignoreArchived = true)
+        public async Task<IEnumerable<Show>> GetShowsByTour(long tourId, bool ignoreArchived = true, bool loadIncludes = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Shows.Where(x => x.TourId == tourId).ToListAsync();
+            IQueryable<Show> query = _databaseContext.Shows;
 
-            return await _databaseContext.Shows.Where(x => x.TourId == tourId && x.DeletedOn == null).ToListAsync();
+            if (loadIncludes)
+                query = query.Include(x => x.Location)
+                    .Include(x => x.Tour)
+                    .ThenInclude(x => x.Talent);
+
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.Where(x => x.TourId == tourId).ToListAsync();
         }
 
-        public async Task<Show?> GetShowById(long id, bool ignoreArchived = true)
+        public async Task<Show?> GetShowById(long id, bool ignoreArchived = true, bool loadIncludes = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id);
+            IQueryable<Show> query = _databaseContext.Shows;
 
-            return await _databaseContext.Shows.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
+            if (loadIncludes)
+                query = query.Include(x => x.Location)
+                    .Include(x => x.Tour)
+                    .ThenInclude(x => x.Talent);
+
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Show?> AddShow(Show show)

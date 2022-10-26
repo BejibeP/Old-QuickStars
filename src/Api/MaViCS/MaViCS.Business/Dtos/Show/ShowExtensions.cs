@@ -21,7 +21,7 @@ namespace MaViCS.Business.Dtos
             return show;
         }
 
-        public static ShowDto ToShowDto(this Show show)
+        public static ShowDto ToShowDto(this Show show, bool loadTour = true)
         {
             ShowDto result = new ShowDto()
             {
@@ -29,8 +29,8 @@ namespace MaViCS.Business.Dtos
                 Date = show.Date,
             };
 
-            if (show.Tour is not null)
-                result.Tour = show.Tour.ToTourDto();
+            if (show.Tour is not null && loadTour)
+                result.Tour = show.Tour.ToTourDto(false);
 
             if (show.Location is not null)
                 result.Location = show.Location.ToTownDto();

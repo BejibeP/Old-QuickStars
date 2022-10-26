@@ -25,7 +25,7 @@ namespace MaViCS.Business.Dtos
             return tour;
         }
 
-        public static TourDto ToTourDto(this Tour tour)
+        public static TourDto ToTourDto(this Tour tour, bool loadShows = true)
         {
             TourDto result = new TourDto()
             {
@@ -38,8 +38,8 @@ namespace MaViCS.Business.Dtos
             if (tour.Talent is not null)
                 result.Talent = tour.Talent.ToTalentDto();
 
-            if (tour.Shows is not null)
-                result.Shows = tour.Shows.Select(x => x.ToShowDto()).ToList();
+            if (tour.Shows is not null && loadShows)
+                result.Shows = tour.Shows.Select(x => x.ToShowDto(false)).ToList();
 
             return result;
         }

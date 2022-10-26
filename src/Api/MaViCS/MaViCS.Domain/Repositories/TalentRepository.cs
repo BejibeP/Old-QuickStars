@@ -14,20 +14,26 @@ namespace MaViCS.Domain.Repositories
             _databaseContext = databaseContext;
         }
 
-        public async Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true)
+        public async Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true, bool loadIncludes = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Talents.ToListAsync();
+            IQueryable<Talent> query = _databaseContext.Talents;
 
-            return await _databaseContext.Talents.Where(x => x.DeletedOn == null).ToListAsync();
+            if (loadIncludes) query = query.Include(x => x.HomeTown);
+
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.ToListAsync();
         }
 
-        public async Task<Talent?> GetTalentById(long id, bool ignoreArchived = true)
+        public async Task<Talent?> GetTalentById(long id, bool ignoreArchived = true, bool loadIncludes = true)
         {
-            if (!ignoreArchived)
-                return await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id);
+            IQueryable<Talent> query = _databaseContext.Talents;
 
-            return await _databaseContext.Talents.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null);
+            if (loadIncludes) query = query.Include(x => x.HomeTown);
+
+            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Talent?> AddTalent(Talent talent)

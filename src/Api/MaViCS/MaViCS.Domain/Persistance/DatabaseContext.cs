@@ -1,4 +1,5 @@
 ﻿using MaViCS.Domain.Models;
+using MaViCS.Domain.Persistance.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 
@@ -18,38 +19,10 @@ namespace MaViCS.Domain.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Town>()
-                .Property(e => e.Latitude).HasPrecision(7, 4);
-
-            modelBuilder.Entity<Town>()
-                .Property(e => e.Longitude).HasPrecision(7, 4);
-
-            modelBuilder.Entity<Town>().HasMany(e => e.Talents);
-
-            modelBuilder.Entity<Town>().HasMany(e => e.Shows);
-
-            modelBuilder.Entity<Talent>()
-                .HasOne(e => e.HomeTown)
-                .WithMany(e => e.Talents)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Tour>()
-                .HasOne(e => e.Talent)
-                .WithMany(e => e.Tours)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Tour>()
-                .HasMany(e => e.Shows);
-
-            modelBuilder.Entity<Show>()
-                .HasOne(e => e.Tour)
-                .WithMany(e => e.Shows)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Show>()
-                .HasOne(e => e.Location)
-                .WithMany(e => e.Shows)
-                .OnDelete(DeleteBehavior.SetNull);
+            TownConfiguration.OnModelCreating(modelBuilder);
+            TalentConfiguration.OnModelCreating(modelBuilder);
+            TourConfiguration.OnModelCreating(modelBuilder);
+            ShowConfiguration.OnModelCreating(modelBuilder);
 
             OnModelInitialize(modelBuilder);
         }
