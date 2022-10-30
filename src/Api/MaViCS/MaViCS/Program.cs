@@ -1,9 +1,14 @@
 using MaViCS.Business.Interfaces;
 using MaViCS.Business.Services;
 using MaViCS.Domain.Interfaces;
+using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance;
 using MaViCS.Domain.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace MaViCS
 {
@@ -13,28 +18,13 @@ namespace MaViCS
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddDbContext<DatabaseContext>(options =>
-            {
-                //options.UseInMemoryDatabase("MaViCS");
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            builder.Services.ConfigureDatabase(builder.Configuration);
 
-            builder.Services.AddScoped<ITalentService, TalentService>();
-            builder.Services.AddScoped<ITownService, TownService>();
-            builder.Services.AddScoped<ITourService, TourService>();
-            builder.Services.AddScoped<IShowService, ShowService>();
+            builder.Services.ConfigureDependencyInjection();
 
-            builder.Services.AddScoped<ITalentRepository, TalentRepository>();
-            builder.Services.AddScoped<ITownRepository, TownRepository>();
-            builder.Services.AddScoped<ITourRepository, TourRepository>();
-            builder.Services.AddScoped<IShowRepository, ShowRepository>();
+            builder.Services.ConfigureAuthentication(builder.Configuration);
 
-            builder.Services.AddControllers();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureSwagger(builder.Configuration);
 
             var app = builder.Build();
 
@@ -46,9 +36,10 @@ namespace MaViCS
             }
 
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 

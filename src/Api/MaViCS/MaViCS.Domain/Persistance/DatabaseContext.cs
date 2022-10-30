@@ -1,4 +1,5 @@
-﻿using MaViCS.Domain.Models;
+﻿using MaViCS.Domain.Framework;
+using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
@@ -12,6 +13,7 @@ namespace MaViCS.Domain.Persistance
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Town> Towns { get; set; }
         public DbSet<Talent> Talents { get; set; }
         public DbSet<Tour> Tours { get; set; }
@@ -19,6 +21,7 @@ namespace MaViCS.Domain.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            UserConfiguration.OnModelCreating(modelBuilder);
             TownConfiguration.OnModelCreating(modelBuilder);
             TalentConfiguration.OnModelCreating(modelBuilder);
             TourConfiguration.OnModelCreating(modelBuilder);
@@ -30,59 +33,18 @@ namespace MaViCS.Domain.Persistance
         private void OnModelInitialize(ModelBuilder modelBuilder)
         {
 
-            var atlantis = new Town
+            var user1 = new User
             {
                 Id = 1,
-                Name = "Atlantis",
-                Region = "Ocean",
-                Description = "A Sunken city",
-                Latitude = 0,
-                Longitude = 0,
+                Username = "superviseur",
+                Mail = "su@mail.com",
+                Password = PasswordTool.HashPassword("admin"),
+                Role = UserRole.UserRoleEnum.Superviseur,
                 CreatedBy = "Application",
                 CreatedOn = DateTime.UtcNow
             };
 
-            modelBuilder.Entity<Town>().HasData(atlantis);
-
-            var gawr = new Talent
-            {
-                Id = 1,
-                Name = "Gura",
-                Surname = "Gawr",
-                Title = "Shark-Girl Idol",
-                HomeTownId = 1,
-                CreatedBy = "Application",
-                CreatedOn = DateTime.UtcNow
-            };
-
-            modelBuilder.Entity<Talent>().HasData(gawr);
-
-            var startDate = new DateTime(2022, 1, 1);
-
-            var tour1 = new Tour
-            {
-                Id = 1,
-                TalentId = 1,
-                Name = "Shark First Concert",
-                StartedOn = startDate,
-                CreatedBy = "Application",
-                CreatedOn = DateTime.UtcNow
-            };
-
-            modelBuilder.Entity<Tour>().HasData(tour1);
-
-            var show1 = new Show
-            {
-                Id = 1,
-                TourId = 1,
-                LocationId = 1,
-                Date = startDate,
-                CreatedBy = "Application",
-                CreatedOn = DateTime.UtcNow
-            };
-
-            modelBuilder.Entity<Show>().HasData(show1);
-
+            modelBuilder.Entity<User>().HasData(user1);
         }
 
     }
