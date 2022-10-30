@@ -9,9 +9,9 @@ namespace MaViCS.Business.Interfaces
 
         Task<TownDto?> GetTownById(long id);
 
-        Task<TownDto?> AddTown(CreateOrUpdateTownDto shrineDto);
+        Task<TownDto?> AddTown(CreateOrUpdateTownDto townDto);
 
-        Task<TownDto?> UpdateTown(long id, CreateOrUpdateTownDto shrineDto);
+        Task<TownDto?> UpdateTown(long id, CreateOrUpdateTownDto townDto);
 
         Task<bool> ArchiveTown(long id);
 

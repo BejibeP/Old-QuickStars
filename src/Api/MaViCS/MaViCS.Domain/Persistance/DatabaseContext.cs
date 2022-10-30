@@ -12,6 +12,7 @@ namespace MaViCS.Domain.Persistance
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Town> Towns { get; set; }
         public DbSet<Talent> Talents { get; set; }
         public DbSet<Tour> Tours { get; set; }
@@ -19,6 +20,7 @@ namespace MaViCS.Domain.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            UserConfiguration.OnModelCreating(modelBuilder);
             TownConfiguration.OnModelCreating(modelBuilder);
             TalentConfiguration.OnModelCreating(modelBuilder);
             TourConfiguration.OnModelCreating(modelBuilder);
@@ -29,6 +31,19 @@ namespace MaViCS.Domain.Persistance
 
         private void OnModelInitialize(ModelBuilder modelBuilder)
         {
+
+            var user1 = new User
+            {
+                Id = 1,
+                Username = "superviseur",
+                Mail = "su@mail.com",
+                Password = "A",
+                Role = UserRole.Admin,
+                CreatedBy = "Application",
+                CreatedOn = DateTime.UtcNow
+            };
+
+            modelBuilder.Entity<User>().HasData(user1);
 
             var atlantis = new Town
             {
