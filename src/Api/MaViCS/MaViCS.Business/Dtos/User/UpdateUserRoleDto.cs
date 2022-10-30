@@ -5,7 +5,7 @@ namespace MaViCS.Business.Dtos
     public class UpdateUserRoleDto
     {
 
-        public UserRole Role { get; set; }
+        public UserRole.UserRoleEnum Role { get; set; }
 
     }
 }

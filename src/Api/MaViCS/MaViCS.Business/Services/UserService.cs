@@ -1,18 +1,21 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
+using MaViCS.Domain.Framework;
+using MaViCS.Domain.Framework.Configuration;
 using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Repositories;
+using Microsoft.Extensions.Options;
 
 namespace MaViCS.Business.Services
 {
     public class UserService : IUserService
     {
         public readonly IUserRepository _userRepository;
+        private readonly IOptions<JwtSettings> _jwtSettings;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings)
         {
             _userRepository = userRepository;
+            _jwtSettings = jwtSettings;
         }
 
         public async Task<IEnumerable<UserDto>> GetUsers()
@@ -29,16 +32,29 @@ namespace MaViCS.Business.Services
             return user?.ToUserDto();
         }
 
-        public async Task<UserDto?> AuthenticateUser(string login, string password)
+        public async Task<TokenDto?> AuthenticateUser(string login, string password)
         {
-            var user = await _userRepository.AuthenticateUser(login, password);
+            var user = await _userRepository.AuthenticateUser(login, PasswordTool.HashPassword(password));
 
-            return user?.ToUserDto();
+            if (user is null)
+                return null;
+
+            JwtSettings jwtSettings = _jwtSettings.Value;
+
+            TokenDto token = new TokenDto()
+            {
+                Username = user.Username,
+                Token = TokenTool.GenerateJwt(user, jwtSettings)
+            };
+
+            return token;
         }
 
         public async Task<UserDto?> AddUser(CreateUserDto userDto)
         {
             var user = userDto.ToUser();
+
+            user.Password = PasswordTool.HashPassword(userDto.Password);
 
             user = await _userRepository.AddUser(user);
 

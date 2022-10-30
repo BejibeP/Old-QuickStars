@@ -9,7 +9,7 @@
 
         public string Password { get; set; }
 
-        public UserRole Role { get; set; }
+        public UserRole.UserRoleEnum Role { get; set; }
 
     }
 }

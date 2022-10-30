@@ -38,7 +38,6 @@ namespace MaViCS.Domain.Repositories
 
             query = query.Where(x => x.Username == login || x.Mail == login)
                 .Where(x => x.Password == password);
-            //SecurityTools.HashPassword(password));
 
             return await query.FirstOrDefaultAsync();
         }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaViCS.Domain.Persistance.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221025225102_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221030203738_OneMigration")]
+    partial class OneMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 25, DateTimeKind.Utc).AddTicks(6064));
+                        .HasDefaultValue(new DateTime(2022, 10, 30, 20, 37, 38, 619, DateTimeKind.Utc).AddTicks(8156));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -70,17 +70,6 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.HasIndex("TourId");
 
                     b.ToTable("Shows");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8486),
-                            Date = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LocationId = 1L,
-                            TourId = 1L
-                        });
                 });
 
             modelBuilder.Entity("MaViCS.Domain.Models.Talent", b =>
@@ -99,7 +88,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 23, DateTimeKind.Utc).AddTicks(1416));
+                        .HasDefaultValue(new DateTime(2022, 10, 30, 20, 37, 38, 617, DateTimeKind.Utc).AddTicks(188));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -132,18 +121,6 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.HasIndex("HomeTownId");
 
                     b.ToTable("Talents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8450),
-                            HomeTownId = 1L,
-                            Name = "Gura",
-                            Surname = "Gawr",
-                            Title = "Shark-Girl Idol"
-                        });
                 });
 
             modelBuilder.Entity("MaViCS.Domain.Models.Tour", b =>
@@ -162,7 +139,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 24, DateTimeKind.Utc).AddTicks(3753));
+                        .HasDefaultValue(new DateTime(2022, 10, 30, 20, 37, 38, 618, DateTimeKind.Utc).AddTicks(3494));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -194,17 +171,6 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.HasIndex("TalentId");
 
                     b.ToTable("Tours");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8468),
-                            Name = "Shark First Concert",
-                            StartedOn = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TalentId = 1L
-                        });
                 });
 
             modelBuilder.Entity("MaViCS.Domain.Models.Town", b =>
@@ -223,7 +189,7 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 10, 25, 22, 51, 2, 23, DateTimeKind.Utc).AddTicks(317));
+                        .HasDefaultValue(new DateTime(2022, 10, 30, 20, 37, 38, 616, DateTimeKind.Utc).AddTicks(9251));
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -258,18 +224,67 @@ namespace MaViCS.Domain.Persistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Towns");
+                });
+
+            modelBuilder.Entity("MaViCS.Domain.Models.User", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Application");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 10, 30, 20, 37, 38, 616, DateTimeKind.Utc).AddTicks(8446));
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Mail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1L,
                             CreatedBy = "Application",
-                            CreatedOn = new DateTime(2022, 10, 25, 22, 51, 2, 27, DateTimeKind.Utc).AddTicks(8263),
-                            Description = "A Sunken city",
-                            Latitude = 0m,
-                            Longitude = 0m,
-                            Name = "Atlantis",
-                            Region = "Ocean"
+                            CreatedOn = new DateTime(2022, 10, 30, 20, 37, 38, 629, DateTimeKind.Utc).AddTicks(1374),
+                            Mail = "su@mail.com",
+                            Password = "zRiW9NSn18oJvNBg2Zb/VpySfB/QRNkKJQo44yJID3Q=",
+                            Role = 1,
+                            Username = "superviseur"
                         });
                 });
 

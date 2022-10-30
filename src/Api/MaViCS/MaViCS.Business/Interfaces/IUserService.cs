@@ -9,7 +9,7 @@ namespace MaViCS.Business.Interfaces
 
         Task<UserDto?> GetUserById(long id);
 
-        Task<UserDto?> AuthenticateUser(string login, string password);
+        Task<TokenDto?> AuthenticateUser(string login, string password);
 
         Task<UserDto?> AddUser(CreateUserDto userDto);
 

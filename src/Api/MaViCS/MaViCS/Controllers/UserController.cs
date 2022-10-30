@@ -1,10 +1,12 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
+using MaViCS.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaViCS.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -34,8 +36,9 @@ namespace MaViCS.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpGet("Login")]
-        public async Task<ActionResult<UserDto>> LoginUser([FromQuery] string login, [FromQuery] string password)
+        public async Task<ActionResult<TokenDto>> LoginUser([FromQuery] string login, [FromQuery] string password)
         {
             var user = await _userService.AuthenticateUser(login, password);
 
@@ -45,6 +48,7 @@ namespace MaViCS.Controllers
             return Ok(user);
         }
 
+        [Authorize(Roles = "Superviseur")]
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto userDto)
         {
