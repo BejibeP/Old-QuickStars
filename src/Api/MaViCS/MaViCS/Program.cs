@@ -18,6 +18,8 @@ namespace MaViCS
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.LoadConfiguration(builder.Configuration);
+
             builder.Services.ConfigureDatabase(builder.Configuration);
 
             builder.Services.ConfigureDependencyInjection();
@@ -36,7 +38,6 @@ namespace MaViCS
             }
 
             app.UseHttpsRedirection();
-            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();

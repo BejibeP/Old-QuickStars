@@ -1,21 +1,25 @@
 ﻿using MaViCS.Business.Dtos;
+using MaViCS.Domain.Framework.Authentication;
 
 namespace MaViCS.Business.Interfaces
 {
     public interface IUserService
     {
 
-        Task<IEnumerable<UserDto>> GetUsers();
+        Task<UserDto?> RegisterUser(RegisterUserDto userDto);
+
+        Task<AuthToken?> LoginUser(LoginUserDto loginDto);
+
+        Task<UserDto?> ResetPassword(ResetPasswordDto passwordDto);
+
+
+        Task<IEnumerable<UserDto>> GetAllUsers();
 
         Task<UserDto?> GetUserById(long id);
 
-        Task<TokenDto?> AuthenticateUser(string login, string password);
-
-        Task<UserDto?> AddUser(CreateUserDto userDto);
-
         Task<UserDto?> UpdateUser(long id, UpdateUserDto userDto);
 
-        Task<UserDto?> UpdateUserRole(long id, UpdateUserRoleDto userDto);
+        Task<UserDto?> ManageUser(long id, ManageUserDto userDto);
 
         Task<bool> ArchiveUser(long id);
 

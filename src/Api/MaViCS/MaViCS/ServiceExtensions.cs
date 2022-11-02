@@ -1,6 +1,7 @@
 ﻿using MaViCS.Business.Interfaces;
 using MaViCS.Business.Services;
 using MaViCS.Domain.Framework;
+using MaViCS.Domain.Framework.Authentication;
 using MaViCS.Domain.Framework.Configuration;
 using MaViCS.Domain.Interfaces;
 using MaViCS.Domain.Persistance;
@@ -18,18 +19,23 @@ namespace MaViCS
     public static class ServiceExtensions
     {
 
+        public static void LoadConfiguration(this IServiceCollection services, ConfigurationManager configurationManager)
+        {
+            var authSection = configurationManager.GetSection("AuthSettings");
+            services.Configure<AuthSettings>(authSection);
+        }
+
         public static void ConfigureDatabase(this IServiceCollection services, ConfigurationManager configurationManager)
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                //options.UseInMemoryDatabase("MaViCS");
                 options.UseSqlServer(configurationManager.GetConnectionString("DefaultConnection"));
             });
         }
 
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddSingleton<SecurityHelper>();
+            services.AddSingleton<AuthHelper>();
 
             services.AddControllers();
 
@@ -51,11 +57,7 @@ namespace MaViCS
 
         public static void ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configurationManager)
         {
-
-            var jwtSection = configurationManager.GetSection("JwtSettings");
-            services.Configure<JwtSettings>(jwtSection);
-
-            var jwtConfig = jwtSection.Get<JwtSettings>();
+            var authConfig = configurationManager.GetSection("AuthSettings").Get<AuthSettings>();
 
             services.AddAuthentication(options =>
             {
@@ -69,9 +71,9 @@ namespace MaViCS
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = jwtConfig.Issuer,
-                    ValidAudience = jwtConfig.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret)),
+                    ValidIssuer = authConfig.TokenSettings.Issuer,
+                    ValidAudience = authConfig.TokenSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.TokenSettings.Secret)),
                     ClockSkew = TimeSpan.Zero
                 };
             });
@@ -85,7 +87,7 @@ namespace MaViCS
             //configuration de Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TineosProject.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Padoru.API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -112,7 +114,6 @@ namespace MaViCS
                     }
                 });
             });
-
         }
 
     }

@@ -1,102 +1,106 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Framework;
-using MaViCS.Domain.Framework.Configuration;
+using MaViCS.Domain.Framework.Authentication;
 using MaViCS.Domain.Interfaces;
-using Microsoft.Extensions.Options;
 
 namespace MaViCS.Business.Services
 {
     public class UserService : IUserService
     {
-        public readonly IUserRepository _userRepository;
-        private readonly IOptions<JwtSettings> _jwtSettings;
+        private readonly IUserRepository _userRepository;
+        private readonly AuthHelper _securityHelper;
 
-        public UserService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings)
+        public UserService(IUserRepository userRepository, AuthHelper securityHelper)
         {
             _userRepository = userRepository;
-            _jwtSettings = jwtSettings;
+            _securityHelper = securityHelper;
         }
 
-        public async Task<IEnumerable<UserDto>> GetUsers()
-        {
-            var users = await _userRepository.GetUsers();
 
+        public async Task<UserDto?> RegisterUser(RegisterUserDto userDto)
+        {
+            userDto.Password = _securityHelper.HashPassword(userDto.Password);
+
+            var user = await _userRepository.Create(userDto.ToUser());
+
+            return user?.ToUserDto();
+        }
+
+        public async Task<AuthToken?> LoginUser(LoginUserDto loginDto)
+        {
+            string hashedPassword = _securityHelper.HashPassword(loginDto.Password);
+
+            var user = await _userRepository.GetUserByLoginAndPassword(loginDto.Login, hashedPassword);
+
+            if (user is null)
+                return null;
+
+            user.LastLoggedOn = DateTime.UtcNow;
+            await _userRepository.Update(user);
+
+            return _securityHelper.GenerateToken(user);
+        }
+
+        public async Task<UserDto?> ResetPassword(ResetPasswordDto passwordDto)
+        {
+            string hashedPassword = _securityHelper.HashPassword(passwordDto.Password);
+
+            var user = await _userRepository.GetUserByLoginAndPassword(passwordDto.Login, hashedPassword);
+
+            if (user is null)
+                return null;
+
+            user.Password = _securityHelper.HashPassword(passwordDto.NewPassword);
+            user.ResetPassword = false;
+
+            var updatedUser = await _userRepository.Update(user);
+
+            return updatedUser?.ToUserDto();
+        }
+
+
+        public async Task<IEnumerable<UserDto>> GetAllUsers()
+        {
+            var users = await _userRepository.GetAll();
             return users.Select(x => x.ToUserDto()).ToList();
         }
 
         public async Task<UserDto?> GetUserById(long id)
         {
-            var user = await _userRepository.GetUserById(id);
-
-            return user?.ToUserDto();
-        }
-
-        public async Task<TokenDto?> AuthenticateUser(string login, string password)
-        {
-            var user = await _userRepository.AuthenticateUser(login, PasswordTool.HashPassword(password));
-
-            if (user is null)
-                return null;
-
-            JwtSettings jwtSettings = _jwtSettings.Value;
-
-            TokenDto token = new TokenDto()
-            {
-                Username = user.Username,
-                Token = TokenTool.GenerateJwt(user, jwtSettings)
-            };
-
-            return token;
-        }
-
-        public async Task<UserDto?> AddUser(CreateUserDto userDto)
-        {
-            var user = userDto.ToUser();
-
-            user.Password = PasswordTool.HashPassword(userDto.Password);
-
-            user = await _userRepository.AddUser(user);
-
+            var user = await _userRepository.GetById(id);
             return user?.ToUserDto();
         }
 
         public async Task<UserDto?> UpdateUser(long id, UpdateUserDto userDto)
         {
-            var user = await _userRepository.GetUserById(id);
+            var user = await _userRepository.GetById(id);
 
-            if (user == null)
-                return null;
+            if (user is null) return null;
 
-            user = user.UpdateUser(userDto);
+            var updatedUser = await _userRepository.Update(user.UpdateUser(userDto));
 
-            user = await _userRepository.UpdateUser(user);
-
-            return user?.ToUserDto();
+            return updatedUser?.ToUserDto();
         }
 
-        public async Task<UserDto?> UpdateUserRole(long id, UpdateUserRoleDto userDto)
+        public async Task<UserDto?> ManageUser(long id, ManageUserDto userDto)
         {
-            var user = await _userRepository.GetUserById(id);
+            var user = await _userRepository.GetById(id);
 
-            if (user == null)
-                return null;
+            if (user is null) return null;
 
-            user.Role = userDto.Role;
+            var updatedUser = await _userRepository.Update(user.UpdateUser(userDto));
 
-            user = await _userRepository.UpdateUser(user);
-
-            return user?.ToUserDto();
+            return updatedUser?.ToUserDto();
         }
 
         public async Task<bool> ArchiveUser(long id)
         {
-            return await _userRepository.ArchiveUser(id);
+            return await _userRepository.Archive(id);
         }
 
         public async Task<bool> DeleteUser(long id)
         {
-            return await _userRepository.DeleteUser(id);
+            return await _userRepository.Delete(id);
         }
 
     }

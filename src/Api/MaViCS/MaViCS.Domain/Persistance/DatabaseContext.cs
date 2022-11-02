@@ -1,23 +1,26 @@
-﻿using MaViCS.Domain.Framework;
+﻿using MaViCS.Domain.Framework.Authentication;
+using MaViCS.Domain.Framework.Habilitation;
 using MaViCS.Domain.Models;
 using MaViCS.Domain.Persistance.Configuration;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Metrics;
 
 namespace MaViCS.Domain.Persistance
 {
     public class DatabaseContext : DbContext
     {
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
-        {
-        }
+        private readonly AuthHelper _securityHelper;
 
         public DbSet<User> Users { get; set; }
         public DbSet<Town> Towns { get; set; }
         public DbSet<Talent> Talents { get; set; }
         public DbSet<Tour> Tours { get; set; }
         public DbSet<Show> Shows { get; set; }
+
+        public DatabaseContext(DbContextOptions<DatabaseContext> options, AuthHelper securityHelper) : base(options)
+        {
+            _securityHelper = securityHelper;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,19 +35,17 @@ namespace MaViCS.Domain.Persistance
 
         private void OnModelInitialize(ModelBuilder modelBuilder)
         {
-
-            var user1 = new User
+            var supervisor = new User
             {
                 Id = 1,
                 Username = "superviseur",
-                Mail = "su@mail.com",
-                Password = PasswordTool.HashPassword("admin"),
-                Role = UserRole.UserRoleEnum.Superviseur,
-                CreatedBy = "Application",
-                CreatedOn = DateTime.UtcNow
+                Password = _securityHelper.HashPassword("admin"),
+                Role = UserRoleEnum.Administrator,
+                ResetPassword = true,
+                Enabled = true
             };
 
-            modelBuilder.Entity<User>().HasData(user1);
+            modelBuilder.Entity<User>().HasData(supervisor);
         }
 
     }

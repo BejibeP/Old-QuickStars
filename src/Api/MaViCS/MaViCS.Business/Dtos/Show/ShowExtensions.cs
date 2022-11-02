@@ -1,4 +1,5 @@
-﻿using MaViCS.Domain.Models;
+﻿using MaViCS.Business.Dtos;
+using MaViCS.Domain.Models;
 
 namespace MaViCS.Business.Dtos
 {

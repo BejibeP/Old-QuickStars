@@ -1,4 +1,5 @@
-﻿using MaViCS.Domain.Models;
+﻿using MaViCS.Domain.Framework.Habilitation;
+using MaViCS.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaViCS.Domain.Persistance.Configuration
@@ -16,6 +17,15 @@ namespace MaViCS.Domain.Persistance.Configuration
 
             modelBuilder.Entity<User>()
                 .Property(x => x.CreatedBy).HasDefaultValue("Application");
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Role).HasDefaultValue(UserRoleEnum.None);
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.ResetPassword).HasDefaultValue(false);
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Enabled).HasDefaultValue(false);
 
         }
     }

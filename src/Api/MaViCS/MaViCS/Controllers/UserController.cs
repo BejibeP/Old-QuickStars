@@ -1,6 +1,5 @@
 ﻿using MaViCS.Business.Dtos;
 using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +18,14 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            var users = await _userService.GetUsers();
+            var users = await _userService.GetAllUsers();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetById(long id)
+        public async Task<ActionResult<UserDto>> GetUser(long id)
         {
             var user = await _userService.GetUserById(id);
 
@@ -34,40 +33,6 @@ namespace MaViCS.Controllers
                 return NotFound();
 
             return Ok(user);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("Login")]
-        public async Task<ActionResult<TokenDto>> LoginUser([FromQuery] string login, [FromQuery] string password)
-        {
-            var user = await _userService.AuthenticateUser(login, password);
-
-            if (user is null)
-                return NotFound();
-
-            return Ok(user);
-        }
-
-        [Authorize(Roles = "Superviseur")]
-        [HttpPost]
-        public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto userDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var user = await _userService.AddUser(userDto);
-
-                if (user is null)
-                    return BadRequest();
-
-                return Ok(user);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
         }
 
         [HttpPut]
@@ -91,15 +56,16 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpPut("UserRole")]
-        public async Task<ActionResult<UserDto>> Update([FromQuery] long id, [FromBody] UpdateUserRoleDto userDto)
+        [Route("Manage")]
+        [HttpPut]
+        public async Task<ActionResult<UserDto>> Update([FromQuery] long id, [FromBody] ManageUserDto userDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var user = await _userService.UpdateUserRole(id, userDto);
+                var user = await _userService.ManageUser(id, userDto);
 
                 if (user is null)
                     return NotFound();

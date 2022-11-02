@@ -16,14 +16,14 @@ namespace MaViCS.Business.Services
 
         public async Task<IEnumerable<TalentDto>> GetTalents()
         {
-            var talents = await _talentRepository.GetTalents();
+            var talents = await _talentRepository.GetAll();
 
             return talents.Select(x => x.ToTalentDto()).ToList();
         }
 
         public async Task<TalentDto?> GetTalentById(long id)
         {
-            var talent = await _talentRepository.GetTalentById(id);
+            var talent = await _talentRepository.GetById(id);
 
             return talent?.ToTalentDto();
         }
@@ -32,32 +32,32 @@ namespace MaViCS.Business.Services
         {
             var talent = talentDto.ToTalent();
 
-            talent = await _talentRepository.AddTalent(talent);
+            talent = await _talentRepository.Create(talent);
 
             return talent?.ToTalentDto();
         }
 
         public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
-            var talent = await _talentRepository.GetTalentById(id, true, false);
+            var talent = await _talentRepository.GetById(id, true, null);
 
             if (talent == null)
                 return null;
 
             talent = talent.UpdateTalent(talentDto);
 
-            talent = await _talentRepository.UpdateTalent(talent);
+            talent = await _talentRepository.Update(talent);
             return talent?.ToTalentDto();
         }
 
         public async Task<bool> ArchiveTalent(long id)
         {
-            return await _talentRepository.ArchiveTalent(id);
+            return await _talentRepository.Archive(id);
         }
 
         public async Task<bool> DeleteTalent(long id)
         {
-            return await _talentRepository.DeleteTalent(id);
+            return await _talentRepository.Delete(id);
         }
 
     }
