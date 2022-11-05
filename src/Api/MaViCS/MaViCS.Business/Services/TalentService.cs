@@ -1,9 +1,8 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Repositories;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
 
-namespace MaViCS.Business.Services
+namespace QuickStars.MaViCS.Business.Services
 {
     public class TalentService : ITalentService
     {
@@ -18,7 +17,7 @@ namespace MaViCS.Business.Services
         {
             var talents = await _talentRepository.GetAll();
 
-            return talents.Select(x => x.ToTalentDto()).ToList();
+            return talents.Select(e => e.ToTalentDto()).ToList();
         }
 
         public async Task<TalentDto?> GetTalentById(long id)
@@ -39,7 +38,7 @@ namespace MaViCS.Business.Services
 
         public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
-            var talent = await _talentRepository.GetById(id, true, null);
+            var talent = await _talentRepository.GetById(id, true);
 
             if (talent == null)
                 return null;

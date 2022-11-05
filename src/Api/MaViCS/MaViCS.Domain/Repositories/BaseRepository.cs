@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Persistance;
+using QuickStars.MaViCS.Domain.Data;
+using QuickStars.MaViCS.Domain.Data.Models;
+using QuickStars.MaViCS.Domain.Interfaces;
 using System.Linq.Expressions;
 
-namespace MaViCS.Domain.Repositories
+namespace QuickStars.MaViCS.Domain.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
@@ -22,7 +22,7 @@ namespace MaViCS.Domain.Repositories
             foreach (var include in includes)
                 query = query.Include(include);
 
-            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+            if (ignoreArchived) query = query.Where(e => e.DeletedOn == null);
 
             return await query.ToListAsync();
         }
@@ -34,9 +34,9 @@ namespace MaViCS.Domain.Repositories
             foreach (var include in includes)
                 query = query.Include(include);
 
-            if (ignoreArchived) query = query.Where(x => x.DeletedOn == null);
+            if (ignoreArchived) query = query.Where(e => e.DeletedOn == null);
 
-            return await query.FirstOrDefaultAsync(x => x.Id == id);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public virtual async Task<T?> Create(T entity)
@@ -60,7 +60,7 @@ namespace MaViCS.Domain.Repositories
 
         public virtual async Task<bool> Archive(long id)
         {
-            var entity = await _databaseContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _databaseContext.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
 
             if (entity is null || entity.DeletedOn is not null) return false;
 
@@ -75,7 +75,7 @@ namespace MaViCS.Domain.Repositories
 
         public virtual async Task<bool> Delete(long id)
         {
-            var entity = await _databaseContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _databaseContext.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
 
             if (entity is null) return false;
 

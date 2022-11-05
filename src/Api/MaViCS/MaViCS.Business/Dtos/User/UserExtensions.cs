@@ -1,7 +1,7 @@
-﻿using MaViCS.Domain.Framework.Habilitation;
-using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Models;
+using QuickStars.MaViCS.Domain.Security;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public static class UserExtensions
     {
@@ -12,7 +12,6 @@ namespace MaViCS.Business.Dtos
             {
                 Id = user.Id,
                 Username = user.Username,
-                ProfilePicture = user.ProfilePicture,
                 LastLoggedOn = user.LastLoggedOn,
                 Role = user.Role.ToUserRole(),
                 ResetPassword = user.ResetPassword,
@@ -23,7 +22,6 @@ namespace MaViCS.Business.Dtos
         public static User UpdateUser(this User user, UpdateUserDto dto)
         {
             user.Username = dto.Username;
-            user.ProfilePicture = dto.ProfilePicture;
             return user;
         }
 

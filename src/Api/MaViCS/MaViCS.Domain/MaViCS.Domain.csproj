@@ -4,10 +4,15 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>QuickStars.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>QuickStars.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Product></Product>
+    <Company></Company>
+    <Authors></Authors>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Persistance\Migrations\" />
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
   <ItemGroup>

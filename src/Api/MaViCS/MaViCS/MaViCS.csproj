@@ -7,8 +7,11 @@
     <UserSecretsId>ce315eaa-4629-4718-83b6-b198387e46ef</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
-    <StartupObject>MaViCS.Program</StartupObject>
-    <Authors>Bejibe</Authors>
+    <StartupObject>QuickStars.MaViCS.Program</StartupObject>
+    <Authors>BejibeP</Authors>
+    <AssemblyName>QuickStars.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>QuickStars.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Title>QuickStars.MaViCS</Title>
   </PropertyGroup>
 
   <ItemGroup>

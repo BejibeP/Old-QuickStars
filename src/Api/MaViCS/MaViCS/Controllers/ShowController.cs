@@ -1,8 +1,9 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Business.Services;
 
-namespace MaViCS.Controllers
+namespace QuickStars.MaViCS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,21 +17,39 @@ namespace MaViCS.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IOrderedEnumerable<ShowDto>>> GetByTour([FromQuery] long tourId)
+        public async Task<ActionResult<IEnumerable<ShowDto>>> GetAll()
         {
-            var shows = await _showService.GetShowsByTour(tourId);
+            var shows = await _showService.GetShows();
             return Ok(shows);
         }
 
+        [HttpGet("ByTalent")]
+        public async Task<ActionResult<IEnumerable<ShowDto>>> GetByTalent([FromQuery] long talentId)
+        {
+            var shows = await _showService.GetShowsByTalent(talentId);
+            return Ok(shows);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ShowDto>> GetById(long id)
+        {
+            var show = await _showService.GetShowById(id);
+
+            if (show is null)
+                return NotFound();
+
+            return Ok(show);
+        }
+
         [HttpPost]
-        public async Task<ActionResult<ShowDto>> CreateShow([FromQuery] long tourId, [FromBody] CreateOrUpdateShowDto showDto)
+        public async Task<ActionResult<ShowDto>> Create([FromBody] CreateOrUpdateShowDto showDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var show = await _showService.AddShow(tourId, showDto);
+                var show = await _showService.AddShow(showDto);
 
                 if (show is null)
                     return BadRequest();
@@ -44,14 +63,14 @@ namespace MaViCS.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ShowDto>> UpdateShow([FromQuery] long showId, [FromBody] CreateOrUpdateShowDto showDto)
+        public async Task<ActionResult<ShowDto>> Update([FromQuery] long id, [FromBody] CreateOrUpdateShowDto showDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var show = await _showService.UpdateShow(showId, showDto);
+                var show = await _showService.UpdateShow(id, showDto);
 
                 if (show is null)
                     return BadRequest();
@@ -64,12 +83,30 @@ namespace MaViCS.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteShow([FromQuery] long showId)
+        [HttpPatch]
+        public async Task<ActionResult> Archive([FromQuery] long id)
         {
             try
             {
-                bool result = await _showService.DeleteShow(showId);
+                bool result = await _showService.ArchiveShow(id);
+
+                if (!result)
+                    return NotFound();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromQuery] long id)
+        {
+            try
+            {
+                bool result = await _showService.DeleteShow(id);
 
                 if (!result)
                     return NotFound();

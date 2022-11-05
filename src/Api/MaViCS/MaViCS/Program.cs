@@ -1,16 +1,4 @@
-using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Persistance;
-using MaViCS.Domain.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-
-namespace MaViCS
+namespace QuickStars.MaViCS
 {
     public class Program
     {

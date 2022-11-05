@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public class RegisterUserDto
     {

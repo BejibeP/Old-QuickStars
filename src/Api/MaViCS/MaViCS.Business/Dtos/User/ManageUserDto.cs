@@ -1,9 +1,10 @@
-﻿using MaViCS.Domain.Framework.Habilitation;
+﻿using static QuickStars.MaViCS.Domain.Security.UserHabilitation;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public class ManageUserDto
     {
+
         public DateTime? LastLoggedOn { get; set; }
 
         public UserRole Role { get; set; }
@@ -11,5 +12,6 @@ namespace MaViCS.Business.Dtos
         public bool ResetPassword { get; set; }
 
         public bool Enabled { get; set; }
+
     }
 }

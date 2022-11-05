@@ -1,20 +1,21 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Framework.Authentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
+using QuickStars.MaViCS.Domain.Security;
 
-namespace MaViCS.Controllers
+namespace QuickStars.MaViCS.Controllers
 {
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly AuthHelper _securityHelper;
+        private readonly ISecurityService _securityService;
 
-        public AuthController(IUserService userService, AuthHelper securityHelper)
+        public AuthController(IUserService userService, ISecurityService securityService)
         {
             _userService = userService;
-            _securityHelper = securityHelper;
+            _securityService = securityService;
         }
 
         [Route("api/Login")]
@@ -41,8 +42,8 @@ namespace MaViCS.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (!_securityHelper.VerifyPassword(userDto.Password))
-                    return BadRequest(AuthHelper.InvalidPasswordErrorMessage);
+                if (!_securityService.ValidatePassword(userDto.Password))
+                    return BadRequest(SecurityService.InvalidPasswordErrorMessage);
 
                 var user = await _userService.RegisterUser(userDto);
 
@@ -66,8 +67,8 @@ namespace MaViCS.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (!_securityHelper.VerifyPassword(passwordDto.NewPassword))
-                    return BadRequest(AuthHelper.InvalidPasswordErrorMessage);
+                if (!_securityService.ValidatePassword(passwordDto.NewPassword))
+                    return BadRequest(SecurityService.InvalidPasswordErrorMessage);
 
                 var user = await _userService.ResetPassword(passwordDto);
 

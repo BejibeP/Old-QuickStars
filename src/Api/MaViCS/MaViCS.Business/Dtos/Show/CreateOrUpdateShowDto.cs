@@ -1,11 +1,21 @@
-﻿namespace MaViCS.Business.Dtos
+﻿using QuickStars.MaViCS.Domain.Data.Models;
+using System.ComponentModel.DataAnnotations;
+
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public class CreateOrUpdateShowDto
     {
 
-        public DateTime Date { get; set; }
+        [Required]
+        public long TalentId { get; set; }
 
-        public long? LocationId { get; set; }
+        [Required]
+        public string Name { get; set; }
+
+        public string? Description { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
 
     }
 }

@@ -1,7 +1,7 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Domain.Framework.Authentication;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Domain.Security;
 
-namespace MaViCS.Business.Interfaces
+namespace QuickStars.MaViCS.Business.Interfaces
 {
     public interface IUserService
     {

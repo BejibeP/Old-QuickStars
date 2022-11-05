@@ -1,7 +1,6 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Models;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public static class ShowExtensions
     {
@@ -10,31 +9,35 @@ namespace MaViCS.Business.Dtos
         {
             return new Show()
             {
+                TalentId = dto.TalentId,
+                Name = dto.Name,
+                Description = dto.Description,
                 Date = dto.Date,
-                LocationId = dto.LocationId
             };
         }
 
         public static Show UpdateShow(this Show show, CreateOrUpdateShowDto dto)
         {
+            show.TalentId = dto.TalentId;
+            show.Name = dto.Name;
+            show.Description = dto.Description;
             show.Date = dto.Date;
-            show.LocationId = dto.LocationId;
             return show;
         }
 
-        public static ShowDto ToShowDto(this Show show, bool loadTour = true)
+        public static ShowDto ToShowDto(this Show show)
         {
             ShowDto result = new ShowDto()
             {
                 Id = show.Id,
-                Date = show.Date,
+                TalentId = show.TalentId,
+                Name= show.Name,
+                Description = show.Description,
+                Date = show.Date
             };
 
-            if (show.Tour is not null && loadTour)
-                result.Tour = show.Tour.ToTourDto(false);
-
-            if (show.Location is not null)
-                result.Location = show.Location.ToTownDto();
+            if (show.Talent is not null)
+                result.Talent = show.Talent.ToTalentDto();
 
             return result;
         }

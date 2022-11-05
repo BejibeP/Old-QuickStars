@@ -1,9 +1,8 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
 
-namespace MaViCS.Controllers
+namespace QuickStars.MaViCS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

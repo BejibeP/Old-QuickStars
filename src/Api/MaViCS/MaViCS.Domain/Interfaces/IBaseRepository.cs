@@ -1,7 +1,7 @@
-﻿using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Models;
 using System.Linq.Expressions;
 
-namespace MaViCS.Domain.Interfaces
+namespace QuickStars.MaViCS.Domain.Interfaces
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {

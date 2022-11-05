@@ -1,25 +1,24 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Framework.Authentication;
-using MaViCS.Domain.Interfaces;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
+using QuickStars.MaViCS.Domain.Security;
 
-namespace MaViCS.Business.Services
+namespace QuickStars.MaViCS.Business.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly AuthHelper _securityHelper;
+        private readonly ISecurityService _securityService;
 
-        public UserService(IUserRepository userRepository, AuthHelper securityHelper)
+        public UserService(IUserRepository userRepository, ISecurityService securityService)
         {
             _userRepository = userRepository;
-            _securityHelper = securityHelper;
+            _securityService = securityService;
         }
-
 
         public async Task<UserDto?> RegisterUser(RegisterUserDto userDto)
         {
-            userDto.Password = _securityHelper.HashPassword(userDto.Password);
+            userDto.Password = _securityService.HashPassword(userDto.Password);
 
             var user = await _userRepository.Create(userDto.ToUser());
 
@@ -28,7 +27,7 @@ namespace MaViCS.Business.Services
 
         public async Task<AuthToken?> LoginUser(LoginUserDto loginDto)
         {
-            string hashedPassword = _securityHelper.HashPassword(loginDto.Password);
+            string hashedPassword = _securityService.HashPassword(loginDto.Password);
 
             var user = await _userRepository.GetUserByLoginAndPassword(loginDto.Login, hashedPassword);
 
@@ -38,19 +37,19 @@ namespace MaViCS.Business.Services
             user.LastLoggedOn = DateTime.UtcNow;
             await _userRepository.Update(user);
 
-            return _securityHelper.GenerateToken(user);
+            return _securityService.GenerateAuthToken(user);
         }
 
         public async Task<UserDto?> ResetPassword(ResetPasswordDto passwordDto)
         {
-            string hashedPassword = _securityHelper.HashPassword(passwordDto.Password);
+            string hashedPassword = _securityService.HashPassword(passwordDto.Password);
 
             var user = await _userRepository.GetUserByLoginAndPassword(passwordDto.Login, hashedPassword);
 
             if (user is null)
                 return null;
 
-            user.Password = _securityHelper.HashPassword(passwordDto.NewPassword);
+            user.Password = _securityService.HashPassword(passwordDto.NewPassword);
             user.ResetPassword = false;
 
             var updatedUser = await _userRepository.Update(user);
@@ -62,7 +61,7 @@ namespace MaViCS.Business.Services
         public async Task<IEnumerable<UserDto>> GetAllUsers()
         {
             var users = await _userRepository.GetAll();
-            return users.Select(x => x.ToUserDto()).ToList();
+            return users.Select(e => e.ToUserDto()).ToList();
         }
 
         public async Task<UserDto?> GetUserById(long id)

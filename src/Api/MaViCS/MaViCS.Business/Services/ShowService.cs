@@ -1,54 +1,76 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Repositories;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
 
-namespace MaViCS.Business.Services
+namespace QuickStars.MaViCS.Business.Services
 {
     public class ShowService : IShowService
     {
-        public readonly ITourRepository _tourRepository;
         public readonly IShowRepository _showRepository;
+        public readonly ITalentRepository _talentRepository;
 
-        public ShowService(ITourRepository tourRepository, IShowRepository showRepository)
+        public ShowService(IShowRepository showRepository, ITalentRepository talentRepository)
         {
-            _tourRepository = tourRepository;
             _showRepository = showRepository;
+            _talentRepository = talentRepository;
         }
 
-        public async Task<IOrderedEnumerable<ShowDto>> GetShowsByTour(long tourId)
+        public async Task<IEnumerable<ShowDto>> GetShows()
         {
-            var shows = await _showRepository.GetByTour(tourId);
+            var shows = await _showRepository.GetAll(true, x => x.Talent);
 
-            return shows.Select(x => x.ToShowDto()).OrderBy(x => x.Date);
+            return shows.Select(e => e.ToShowDto()).ToList();
         }
 
-        public async Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto)
+        public async Task<IEnumerable<ShowDto>> GetShowsByTalent(long talentId)
         {
-            var tour = await _tourRepository.GetById(tourId, true, null);
+            var shows = await _showRepository.GetByTalent(talentId, true, x => x.Talent);
 
-            if (tour == null)
+            return shows.Select(e => e.ToShowDto()).ToList();
+        }
+
+        public async Task<ShowDto?> GetShowById(long id)
+        {
+            var show = await _showRepository.GetById(id, true, x => x.Talent);
+
+            return show?.ToShowDto();
+        }
+
+        public async Task<ShowDto?> AddShow(CreateOrUpdateShowDto showDto)
+        {
+            var talent = _talentRepository.GetById(showDto.TalentId);
+
+            if (talent == null)
                 return null;
 
             var show = showDto.ToShow();
-            show.TourId = tourId;
 
             show = await _showRepository.Create(show);
+
             return show?.ToShowDto();
         }
 
         public async Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto)
         {
-            var show = await _showRepository.GetById(showId, true, null);
+            var show = await _showRepository.GetById(showId, true);
 
             if (show == null)
+                return null;
+
+            var talent = _talentRepository.GetById(showDto.TalentId);
+
+            if (talent == null)
                 return null;
 
             show = show.UpdateShow(showDto);
 
             show = await _showRepository.Update(show);
             return show?.ToShowDto();
+        }
+
+        public async Task<bool> ArchiveShow(long id)
+        {
+            return await _showRepository.Archive(id);
         }
 
         public async Task<bool> DeleteShow(long id)

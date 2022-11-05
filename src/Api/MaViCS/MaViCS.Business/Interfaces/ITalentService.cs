@@ -1,6 +1,6 @@
-﻿using MaViCS.Business.Dtos;
+﻿using QuickStars.MaViCS.Business.Dtos;
 
-namespace MaViCS.Business.Interfaces
+namespace QuickStars.MaViCS.Business.Interfaces
 {
     public interface ITalentService
     {

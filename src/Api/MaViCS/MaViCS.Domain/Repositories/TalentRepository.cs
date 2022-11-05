@@ -1,9 +1,8 @@
-﻿using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Persistance;
-using Microsoft.EntityFrameworkCore;
+﻿using QuickStars.MaViCS.Domain.Data;
+using QuickStars.MaViCS.Domain.Data.Models;
+using QuickStars.MaViCS.Domain.Interfaces;
 
-namespace MaViCS.Domain.Repositories
+namespace QuickStars.MaViCS.Domain.Repositories
 {
     public class TalentRepository : BaseRepository<Talent>, ITalentRepository
     {

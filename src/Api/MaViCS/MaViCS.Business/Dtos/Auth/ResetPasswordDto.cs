@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public class ResetPasswordDto
     {
@@ -13,6 +13,5 @@ namespace MaViCS.Business.Dtos
         [Required]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
         public string NewPassword { get; set; }
-
     }
 }

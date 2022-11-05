@@ -1,28 +1,25 @@
-﻿using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
-using MaViCS.Domain.Framework;
-using MaViCS.Domain.Framework.Authentication;
-using MaViCS.Domain.Framework.Configuration;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Persistance;
-using MaViCS.Domain.Repositories;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Business.Services;
+using QuickStars.MaViCS.Domain.Data;
+using QuickStars.MaViCS.Domain.Interfaces;
+using QuickStars.MaViCS.Domain.Repositories;
+using QuickStars.MaViCS.Domain.Security;
+using QuickStars.MaViCS.Domain.Security.Configuration;
 using System.Text;
 
-namespace MaViCS
+namespace QuickStars.MaViCS
 {
     public static class ServiceExtensions
     {
 
         public static void LoadConfiguration(this IServiceCollection services, ConfigurationManager configurationManager)
         {
-            var authSection = configurationManager.GetSection("AuthSettings");
-            services.Configure<AuthSettings>(authSection);
+            var securitySection = configurationManager.GetSection("SecuritySettings");
+            services.Configure<SecuritySettings>(securitySection);
         }
 
         public static void ConfigureDatabase(this IServiceCollection services, ConfigurationManager configurationManager)
@@ -35,29 +32,25 @@ namespace MaViCS
 
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddSingleton<AuthHelper>();
-
-            services.AddControllers();
-
-            // add services
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ITalentService, TalentService>();
-            services.AddScoped<ITownService, TownService>();
-            services.AddScoped<ITourService, TourService>();
-            services.AddScoped<IShowService, ShowService>();
+            services.AddSingleton<ISecurityService, SecurityService>();
 
             // add repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITalentRepository, TalentRepository>();
-            services.AddScoped<ITownRepository, TownRepository>();
-            services.AddScoped<ITourRepository, TourRepository>();
             services.AddScoped<IShowRepository, ShowRepository>();
+
+            // add services
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITalentService, TalentService>();
+            services.AddScoped<IShowService, ShowService>();
+
+            services.AddControllers();
 
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configurationManager)
         {
-            var authConfig = configurationManager.GetSection("AuthSettings").Get<AuthSettings>();
+            var securitySettings = configurationManager.GetSection("SecuritySettings").Get<SecuritySettings>();
 
             services.AddAuthentication(options =>
             {
@@ -71,9 +64,9 @@ namespace MaViCS
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = authConfig.TokenSettings.Issuer,
-                    ValidAudience = authConfig.TokenSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.TokenSettings.Secret)),
+                    ValidIssuer = securitySettings.JWT.Issuer,
+                    ValidAudience = securitySettings.JWT.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securitySettings.JWT.Secret)),
                     ClockSkew = TimeSpan.Zero
                 };
             });

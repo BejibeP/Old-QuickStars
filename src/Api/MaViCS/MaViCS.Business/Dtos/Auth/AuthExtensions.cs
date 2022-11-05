@@ -1,11 +1,9 @@
-﻿using MaViCS.Domain.Framework;
-using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Models;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public static class AuthExtensions
     {
-
         public static User ToUser(this RegisterUserDto dto)
         {
             return new User()
@@ -14,6 +12,5 @@ namespace MaViCS.Business.Dtos
                 Password = dto.Password
             };
         }
-
     }
 }

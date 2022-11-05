@@ -1,6 +1,6 @@
-﻿using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Models;
 
-namespace MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos
 {
     public static class TalentExtensions
     {
@@ -9,16 +9,17 @@ namespace MaViCS.Business.Dtos
         {
             return new Talent()
             {
-                Name = dto.Name,
-                Surname = dto.Surname,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Title = dto.Title,
-                HomeTownId = dto.HomeTownId,
+                DateOfBirth = dto.DateOfBirth
             };
         }
 
         public static Talent UpdateTalent(this Talent talent, UpdateTalentDto dto)
         {
             talent.Title = dto.Title;
+            talent.DateOfBirth = dto.DateOfBirth;
             return talent;
         }
 
@@ -27,14 +28,11 @@ namespace MaViCS.Business.Dtos
             TalentDto result = new TalentDto()
             {
                 Id = talent.Id,
-                Name = talent.Name,
-                Surname = talent.Surname,
-                Title = talent.Title
+                FirstName = talent.FirstName,
+                LastName = talent.LastName,
+                Title = talent.Title,
+                DateOfBirth = talent.DateOfBirth
             };
-
-            if (talent.HomeTown is not null)
-                result.HomeTown = talent.HomeTown.ToTownDto();
-
             return result;
         }
 
