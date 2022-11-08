@@ -1,5 +1,5 @@
 ﻿using QuickStars.MaViCS.Domain.Data;
-using QuickStars.MaViCS.Domain.Data.Models;
+using QuickStars.MaViCS.Domain.Data.Entities;
 using QuickStars.MaViCS.Domain.Interfaces;
 
 namespace QuickStars.MaViCS.Domain.Repositories

@@ -10,6 +10,8 @@ namespace QuickStars.MaViCS
 
             builder.Services.ConfigureDatabase(builder.Configuration);
 
+            builder.Services.ConfigureIdentity(builder.Configuration);
+
             builder.Services.ConfigureDependencyInjection();
 
             builder.Services.ConfigureAuthentication(builder.Configuration);

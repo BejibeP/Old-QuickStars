@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickStars.MaViCS.Domain.Data;
-using QuickStars.MaViCS.Domain.Data.Models;
+using QuickStars.MaViCS.Domain.Data.Entities;
 using QuickStars.MaViCS.Domain.Interfaces;
 using System.Linq.Expressions;
 
@@ -49,9 +49,6 @@ namespace QuickStars.MaViCS.Domain.Repositories
 
         public virtual async Task<T?> Update(T entity)
         {
-            entity.ModifiedOn = DateTime.UtcNow;
-            entity.ModifiedBy = "Application";
-
             var entry = _databaseContext.Set<T>().Update(entity);
             await _databaseContext.SaveChangesAsync();
 

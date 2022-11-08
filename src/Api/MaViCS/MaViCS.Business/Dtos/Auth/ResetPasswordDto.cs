@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuickStars.MaViCS.Business.Dtos
+namespace QuickStars.MaViCS.Business.Dtos.Auth
 {
     public class ResetPasswordDto
     {

@@ -1,4 +1,4 @@
-﻿using QuickStars.MaViCS.Domain.Data.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Entities;
 using System.Linq.Expressions;
 
 namespace QuickStars.MaViCS.Domain.Interfaces

@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using QuickStars.MaViCS.Business.Interfaces;
-using QuickStars.MaViCS.Business.Services;
+using QuickStars.MaViCS.Domain.Auth;
 using QuickStars.MaViCS.Domain.Data;
-using QuickStars.MaViCS.Domain.Interfaces;
-using QuickStars.MaViCS.Domain.Repositories;
-using QuickStars.MaViCS.Domain.Security;
-using QuickStars.MaViCS.Domain.Security.Configuration;
 using System.Text;
 
 namespace QuickStars.MaViCS
@@ -18,8 +14,8 @@ namespace QuickStars.MaViCS
 
         public static void LoadConfiguration(this IServiceCollection services, ConfigurationManager configurationManager)
         {
-            var securitySection = configurationManager.GetSection("SecuritySettings");
-            services.Configure<SecuritySettings>(securitySection);
+            var identitySection = configurationManager.GetSection("Identity");
+            services.Configure<IdentitySettings>(identitySection);
         }
 
         public static void ConfigureDatabase(this IServiceCollection services, ConfigurationManager configurationManager)
@@ -30,19 +26,19 @@ namespace QuickStars.MaViCS
             });
         }
 
+        public static void ConfigureIdentity(this IServiceCollection services, ConfigurationManager configurationManager)
+        {
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<DatabaseContext>()
+                .AddDefaultTokenProviders();
+        }
+
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddSingleton<ISecurityService, SecurityService>();
 
             // add repositories
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITalentRepository, TalentRepository>();
-            services.AddScoped<IShowRepository, ShowRepository>();
 
             // add services
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ITalentService, TalentService>();
-            services.AddScoped<IShowService, ShowService>();
 
             services.AddControllers();
 
@@ -50,26 +46,30 @@ namespace QuickStars.MaViCS
 
         public static void ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configurationManager)
         {
-            var securitySettings = configurationManager.GetSection("SecuritySettings").Get<SecuritySettings>();
+            var identitySettings = configurationManager.GetSection("Identity").Get<IdentitySettings>();
 
+            // Adding Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+            // Adding Jwt Bearer
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidIssuer = securitySettings.JWT.Issuer,
-                    ValidAudience = securitySettings.JWT.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securitySettings.JWT.Secret)),
-                    ClockSkew = TimeSpan.Zero
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = identitySettings.Audience,
+                    ValidIssuer = identitySettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySettings.Secret))
                 };
             });
+
         }
 
         public static void ConfigureSwagger(this IServiceCollection services, ConfigurationManager configuration)

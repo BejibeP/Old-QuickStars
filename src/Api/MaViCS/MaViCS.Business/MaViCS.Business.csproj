@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>QuickStars.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>QuickStars.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Authors>BejibeP</Authors>
   </PropertyGroup>
 
   <ItemGroup>
