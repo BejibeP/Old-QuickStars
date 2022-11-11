@@ -1,26 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using QuickStars.MaViCS.BusinessRW.Dtos;
-using QuickStars.MaViCS.BusinessRW.Interfaces;
-using QuickStars.MaViCS.DomainRW.Interfaces;
-using QuickStars.MaViCS.DomainRW.Security;
-
-namespace QuickStars.MaViCS.Controllers
+﻿namespace QuickStars.MaViCS.Controllers
 {
+    /*
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ISecurityService _securityService;
+        //private readonly ISecurityService _securityService;
 
-        public AuthController(IUserService userService, ISecurityService securityService)
+        public AuthController(IUserService userService)//, ISecurityService securityService)
         {
             _userService = userService;
-            _securityService = securityService;
+            //_securityService = securityService;
         }
 
         [Route("api/Login")]
         [HttpGet]
-        public async Task<ActionResult<AuthToken>> LoginUser([FromQuery] LoginDto loginDto)
+        public async Task<ServiceResult> LoginUser([FromQuery] LoginDto loginDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,4 +79,5 @@ namespace QuickStars.MaViCS.Controllers
         }
 
     }
+    */
 }

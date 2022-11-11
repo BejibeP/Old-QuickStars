@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using QuickStars.MaViCS.BusinessRW.Dtos;
-using QuickStars.MaViCS.BusinessRW.Interfaces;
-
-namespace QuickStars.MaViCS.Controllers
+﻿namespace QuickStars.MaViCS.Controllers
 {
+    /*
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -115,4 +111,5 @@ namespace QuickStars.MaViCS.Controllers
         }
 
     }
+    */
 }

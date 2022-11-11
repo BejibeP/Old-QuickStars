@@ -3,9 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Business.Interfaces.Auth;
+using QuickStars.MaViCS.Business.Services;
+using QuickStars.MaViCS.Business.Services.Auth;
 using QuickStars.MaViCS.Domain.Auth;
 using QuickStars.MaViCS.Domain.Data;
+using QuickStars.MaViCS.Domain.Interfaces;
+using QuickStars.MaViCS.Domain.Repositories;
 using System.Text;
+using System.Text.Json;
 
 namespace QuickStars.MaViCS
 {
@@ -22,7 +29,8 @@ namespace QuickStars.MaViCS
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseSqlServer(configurationManager.GetConnectionString("DefaultConnection"));
+                options.UseInMemoryDatabase("test");
+                //options.UseSqlServer(configurationManager.GetConnectionString("DefaultConnection"));
             });
         }
 
@@ -37,8 +45,14 @@ namespace QuickStars.MaViCS
         {
 
             // add repositories
+            services.AddScoped<ITalentRepository, TalentRepository>();
+            services.AddScoped<IShowRepository, ShowRepository>();
 
             // add services
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITalentService, TalentService>();
+            services.AddScoped<IShowService, ShowService>();
+
 
             services.AddControllers();
 
@@ -58,6 +72,42 @@ namespace QuickStars.MaViCS
             // Adding Jwt Bearer
             .AddJwtBearer(options =>
             {
+                options.Authority = identitySettings.Issuer;
+                options.Audience = identitySettings.Audience;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ClockSkew = new TimeSpan(0, 0, 30),
+                };
+                options.Events = new JwtBearerEvents()
+                {
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+
+                        // Ensure we always have an error and error description.
+                        if (string.IsNullOrEmpty(context.Error))
+                            context.Error = "invalid_token";
+                        if (string.IsNullOrEmpty(context.ErrorDescription))
+                            context.ErrorDescription = "This request requires a valid JWT access token to be provided";
+
+                        // Add some extra context for expired tokens.
+                        if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            var authenticationException = context.AuthenticateFailure as SecurityTokenExpiredException;
+                            context.Response.Headers.Add("x-token-expired", authenticationException?.Expires.ToString("o"));
+                            context.ErrorDescription = $"The token expired on {authenticationException?.Expires.ToString("o")}";
+                        }
+
+                        return context.Response.WriteAsync(JsonSerializer.Serialize(new
+                        {
+                            error = context.Error,
+                            error_description = context.ErrorDescription
+                        }));
+                    }
+                };
+                /*
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -68,6 +118,7 @@ namespace QuickStars.MaViCS
                     ValidIssuer = identitySettings.Issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySettings.Secret))
                 };
+                */
             });
 
         }

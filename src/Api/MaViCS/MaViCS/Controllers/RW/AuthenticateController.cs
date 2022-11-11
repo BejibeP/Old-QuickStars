@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using QuickStars.MaViCS.BusinessRW.Dtos;
-using QuickStars.MaViCS.BusinessRW.Dtos.Auth;
-using QuickStars.MaViCS.DomainRW.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace QuickStars.MaViCS.Controllers
 {
+    /*
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
@@ -126,4 +124,5 @@ namespace QuickStars.MaViCS.Controllers
             return token;
         }
     }
+    */
 }

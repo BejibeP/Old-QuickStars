@@ -27,8 +27,8 @@ namespace QuickStars.MaViCS.Business.Services.Auth
         public async Task<ServiceResult> Register(RegisterDto dto)
         {
             var userExists = await _userManager.FindByNameAsync(dto.Username);
-            if (userExists != null)
-                return null;//return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+            if (userExists is not null)
+                return ServiceResult.Error("User Already Exist");
 
             IdentityUser user = new()
             {
@@ -39,10 +39,9 @@ namespace QuickStars.MaViCS.Business.Services.Auth
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
-                return null;//return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return ServiceResult.Error("User creation failed! Please check user details and try again.");
 
-            return null;
-            //return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            return ServiceResult.Success();
         }
 
         private void Test()
@@ -70,23 +69,23 @@ namespace QuickStars.MaViCS.Business.Services.Auth
             var user = await _userManager.FindByNameAsync(dto.Username);
 
             if (user is null)
-                return null; // not found or unauth
+                return ServiceResult.NotFound("User does not exists");
 
             bool passwordIsValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordIsValid)
-                return null;
+                return ServiceResult.Error("Incorrect password");
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            var token = GenerateJwtToken(user, userRoles);
+            var jwtToken = GenerateJwtToken(user, userRoles);
 
-            return null;
+            var tokenDto = new TokenDto
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                Expiration = jwtToken.ValidTo
+            };
 
-            //return Ok(new
-            //{
-            //    token = new JwtSecurityTokenHandler().WriteToken(token),
-            //    expiration = token.ValidTo
-            //});
+            return ServiceResult<TokenDto>.Success(tokenDto);
         }
 
         private JwtSecurityToken GenerateJwtToken(IdentityUser user, IEnumerable<string> userRoles)

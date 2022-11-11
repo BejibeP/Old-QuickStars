@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
 using QuickStars.MaViCS.Business.Interfaces;
 
 namespace QuickStars.MaViCS.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TalentController : ControllerBase
@@ -79,9 +82,9 @@ namespace QuickStars.MaViCS.Controllers
         {
             try
             {
-                bool result = await _talentService.ArchiveTalent(id);
+                var result = await _talentService.ArchiveTalent(id);
 
-                if (!result)
+                if (result is null)
                     return NotFound();
 
                 return NoContent();
@@ -97,9 +100,9 @@ namespace QuickStars.MaViCS.Controllers
         {
             try
             {
-                bool result = await _talentService.DeleteTalent(id);
+                var result = await _talentService.DeleteTalent(id);
 
-                if (!result)
+                if (result is null)
                     return NotFound();
 
                 return NoContent();

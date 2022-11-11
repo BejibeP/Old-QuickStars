@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using QuickStars.MaViCS.BusinessRW.Dtos;
-using QuickStars.MaViCS.BusinessRW.Interfaces;
-using QuickStars.MaViCS.BusinessRW.Services;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Business.Services;
 
 namespace QuickStars.MaViCS.Controllers
 {
@@ -88,9 +89,9 @@ namespace QuickStars.MaViCS.Controllers
         {
             try
             {
-                bool result = await _showService.ArchiveShow(id);
+                var result = await _showService.ArchiveShow(id);
 
-                if (!result)
+                if (result is null)
                     return NotFound();
 
                 return NoContent();
@@ -106,9 +107,9 @@ namespace QuickStars.MaViCS.Controllers
         {
             try
             {
-                bool result = await _showService.DeleteShow(id);
+                var result = await _showService.DeleteShow(id);
 
-                if (!result)
+                if (result is null)
                     return NotFound();
 
                 return NoContent();

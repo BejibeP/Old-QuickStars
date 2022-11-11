@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using QuickStars.MaViCS.Domain.Data.Entities;
 
 namespace QuickStars.MaViCS.Domain.Data
 {
@@ -12,8 +13,8 @@ namespace QuickStars.MaViCS.Domain.Data
         }
 
         //public DbSet<User> Users { get; set; }
-        //public DbSet<Talent> Talents { get; set; }
-        //public DbSet<Show> Shows { get; set; }
+        public DbSet<Talent> Talents { get; set; }
+        public DbSet<Show> Shows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
