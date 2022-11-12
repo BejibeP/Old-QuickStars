@@ -110,5 +110,32 @@ namespace QuickStars.MaViCS.Business.Services.Auth
             return new JwtSecurityToken(_settings.Issuer, _settings.Audience, authClaims, null, expires, credentials);
         }
 
+        public async Task<ServiceResult> GetUserInfos(ClaimsPrincipal userClaim)
+        {
+            var user = this;
+
+            var id = GetId(userClaim);
+            var claims = userClaim.Claims.ToDictionary(claim => claim.Type, claim => claim.Value);
+            //this.User.GetId(),
+
+            var dto = new UserInfoDto()
+            {
+                Id = id,
+                Claims = claims
+            };
+
+            return ServiceResult<UserInfoDto>.Success(dto);
+        }
+
+        private string GetId(ClaimsPrincipal principal)
+        {
+            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier) ?? principal.FindFirst(c => c.Type == "sub");
+            if (userIdClaim != null && !string.IsNullOrEmpty(userIdClaim.Value))
+            {
+                return userIdClaim.Value;
+            }
+            return "";
+        }
+
     }
 }

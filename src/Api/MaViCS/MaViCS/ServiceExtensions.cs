@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuickStars.MaViCS.Business.Interfaces;
@@ -11,6 +12,7 @@ using QuickStars.MaViCS.Domain.Auth;
 using QuickStars.MaViCS.Domain.Data;
 using QuickStars.MaViCS.Domain.Interfaces;
 using QuickStars.MaViCS.Domain.Repositories;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
@@ -21,6 +23,9 @@ namespace QuickStars.MaViCS
 
         public static void LoadConfiguration(this IServiceCollection services, ConfigurationManager configurationManager)
         {
+            IdentityModelEventSource.ShowPII = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             var identitySection = configurationManager.GetSection("Identity");
             services.Configure<IdentitySettings>(identitySection);
         }
@@ -60,6 +65,7 @@ namespace QuickStars.MaViCS
 
         public static void ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configurationManager)
         {
+
             var identitySettings = configurationManager.GetSection("Identity").Get<IdentitySettings>();
 
             // Adding Authentication
@@ -72,11 +78,14 @@ namespace QuickStars.MaViCS
             // Adding Jwt Bearer
             .AddJwtBearer(options =>
             {
+                options.SaveToken = true;
                 options.Authority = identitySettings.Issuer;
-                options.Audience = identitySettings.Audience;
+                //options.Audience = identitySettings.Audience;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ClockSkew = new TimeSpan(0, 0, 30),
+                    ValidIssuer = identitySettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySettings.Secret))
                 };
                 options.Events = new JwtBearerEvents()
                 {
@@ -107,18 +116,6 @@ namespace QuickStars.MaViCS
                         }));
                     }
                 };
-                /*
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = identitySettings.Audience,
-                    ValidIssuer = identitySettings.Issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySettings.Secret))
-                };
-                */
             });
 
         }
