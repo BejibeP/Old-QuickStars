@@ -1,9 +1,10 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Repositories;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Dtos.Extensions;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
+using QuickStars.MaViCS.Domain.Repositories;
 
-namespace MaViCS.Business.Services
+namespace QuickStars.MaViCS.Business.Services
 {
     public class TalentService : ITalentService
     {
@@ -14,51 +15,65 @@ namespace MaViCS.Business.Services
             _talentRepository = talentRepository;
         }
 
-        public async Task<IEnumerable<TalentDto>> GetTalents()
+        public async Task<ServiceResult<IEnumerable<TalentDto>>> GetTalents()
         {
-            var talents = await _talentRepository.GetTalents();
+            var talents = await _talentRepository.GetAll();
 
-            return talents.Select(x => x.ToTalentDto()).ToList();
+            var talentDtos = talents.Select(e => e.ToTalentDto()).ToList();
+
+            return ServiceResult<IEnumerable<TalentDto>>.Success(talentDtos);
         }
 
-        public async Task<TalentDto?> GetTalentById(long id)
+        public async Task<ServiceResult<TalentDto>> GetTalentById(long id)
         {
-            var talent = await _talentRepository.GetTalentById(id);
+            var talent = await _talentRepository.GetById(id);
+            if (talent is null)
+                return ServiceResult<TalentDto>.NotFound("");
 
-            return talent?.ToTalentDto();
+            return ServiceResult<TalentDto>.Success(talent.ToTalentDto());
         }
 
-        public async Task<TalentDto?> AddTalent(CreateTalentDto talentDto)
+        public async Task<ServiceResult<TalentDto>> AddTalent(CreateTalentDto talentDto)
         {
-            var talent = talentDto.ToTalent();
+            var talent = await _talentRepository.Create(talentDto.ToTalent());
 
-            talent = await _talentRepository.AddTalent(talent);
+            if (talent is null)
+                return ServiceResult<TalentDto>.ServerError();
 
-            return talent?.ToTalentDto();
+            return ServiceResult<TalentDto>.Success(talent.ToTalentDto());
         }
 
-        public async Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto)
+        public async Task<ServiceResult<TalentDto>> UpdateTalent(long id, UpdateTalentDto talentDto)
         {
-            var talent = await _talentRepository.GetTalentById(id, true, false);
-
+            var talent = await _talentRepository.GetById(id);
             if (talent == null)
-                return null;
+                return ServiceResult<TalentDto>.NotFound();
 
-            talent = talent.UpdateTalent(talentDto);
+            talent = await _talentRepository.Update(talent.UpdateTalent(talentDto));
+            if (talent is null)
+                return ServiceResult<TalentDto>.ServerError();
 
-            talent = await _talentRepository.UpdateTalent(talent);
-            return talent?.ToTalentDto();
+            return ServiceResult<TalentDto>.NoContent();
         }
 
-        public async Task<bool> ArchiveTalent(long id)
+        public async Task<ServiceResult<bool>> ArchiveTalent(long id)
         {
-            return await _talentRepository.ArchiveTalent(id);
+            bool result = await _talentRepository.Archive(id);
+
+            if (!result)
+                return ServiceResult<bool>.NotFound();
+
+            return ServiceResult<bool>.NoContent();
         }
 
-        public async Task<bool> DeleteTalent(long id)
+        public async Task<ServiceResult<bool>> DeleteTalent(long id)
         {
-            return await _talentRepository.DeleteTalent(id);
-        }
+            bool result = await _talentRepository.Delete(id);
 
+            if (!result)
+                return ServiceResult<bool>.NotFound();
+
+            return ServiceResult<bool>.NoContent();
+        }
     }
 }

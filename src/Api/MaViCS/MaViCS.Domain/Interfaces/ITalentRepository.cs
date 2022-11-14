@@ -1,21 +1,9 @@
-﻿using MaViCS.Domain.Models;
+﻿using QuickStars.MaViCS.Domain.Data.Entities;
 
-namespace MaViCS.Domain.Interfaces
+namespace QuickStars.MaViCS.Domain.Interfaces
 {
-    public interface ITalentRepository
+    public interface ITalentRepository : IBaseRepository<Talent>
     {
-
-        Task<IEnumerable<Talent>> GetTalents(bool ignoreArchived = true, bool loadIncludes = true);
-
-        Task<Talent?> GetTalentById(long id, bool ignoreArchived = true, bool loadIncludes = true);
-
-        Task<Talent?> AddTalent(Talent talent);
-
-        Task<Talent?> UpdateTalent(Talent talent);
-
-        Task<bool> ArchiveTalent(long id);
-
-        Task<bool> DeleteTalent(long id);
 
     }
 }

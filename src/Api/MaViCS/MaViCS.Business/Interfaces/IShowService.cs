@@ -1,17 +1,21 @@
-﻿using MaViCS.Business.Dtos;
+﻿using QuickStars.MaViCS.Business.Dtos;
 
-namespace MaViCS.Business.Interfaces
+namespace QuickStars.MaViCS.Business.Interfaces
 {
     public interface IShowService
     {
+        Task<ServiceResult<IEnumerable<ShowDto>>> GetShows();
 
-        Task<IOrderedEnumerable<ShowDto>> GetShowsByTour(long tourId);
+        Task<ServiceResult<IEnumerable<ShowDto>>> GetShowsByTalent(long talentId);
 
-        Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto);
+        Task<ServiceResult<ShowDto>> GetShowById(long id);
 
-        Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto);
+        Task<ServiceResult<ShowDto>> AddShow(CreateOrUpdateShowDto showDto);
 
-        Task<bool> DeleteShow(long id);
+        Task<ServiceResult<ShowDto>> UpdateShow(long id, CreateOrUpdateShowDto showDto);
 
+        Task<ServiceResult<bool>> ArchiveShow(long id);
+
+        Task<ServiceResult<bool>> DeleteShow(long id);
     }
 }

@@ -1,10 +1,13 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Auth;
+using QuickStars.MaViCS.Extensions;
 
-namespace MaViCS.Controllers
+namespace QuickStars.MaViCS.Controllers
 {
+    [Authorize(Roles = IdentityRoles.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class TalentController : ControllerBase
@@ -16,101 +19,54 @@ namespace MaViCS.Controllers
             _talentService = talentService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TalentDto>>> GetAll()
         {
             var talents = await _talentService.GetTalents();
-            return Ok(talents);
+            return this.FromResult(talents);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<TalentDto>> GetById(long id)
         {
             var talent = await _talentService.GetTalentById(id);
-
-            if (talent is null)
-                return NotFound();
-
-            return Ok(talent);
+            return this.FromResult(talent);
         }
 
         [HttpPost]
         public async Task<ActionResult<TalentDto>> Create([FromBody] CreateTalentDto talentDto)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-                var talent = await _talentService.AddTalent(talentDto);
-
-                if (talent is null)
-                    return BadRequest();
-
-                return Ok(talent);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var talent = await _talentService.AddTalent(talentDto);
+            return this.FromResult(talent);
         }
 
         [HttpPut]
         public async Task<ActionResult<TalentDto>> Update([FromQuery] long id, [FromBody] UpdateTalentDto talentDto)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-                var talent = await _talentService.UpdateTalent(id, talentDto);
-
-                if (talent is null)
-                    return BadRequest();
-
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var talent = await _talentService.UpdateTalent(id, talentDto);
+            return this.FromResult(talent);
         }
 
         [HttpPatch]
         public async Task<ActionResult> Archive([FromQuery] long id)
         {
-            try
-            {
-                bool result = await _talentService.ArchiveTalent(id);
-
-                if (!result)
-                    return NotFound();
-
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var result = await _talentService.ArchiveTalent(id);
+            return this.FromResult(result);
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete([FromQuery] long id)
         {
-            try
-            {
-                bool result = await _talentService.DeleteTalent(id);
-
-                if (!result)
-                    return NotFound();
-
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var result = await _talentService.DeleteTalent(id);
+            return this.FromResult(result);
         }
-
     }
 }
