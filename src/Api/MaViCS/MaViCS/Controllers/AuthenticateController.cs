@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickStars.MaViCS.Business.Dtos.Auth;
-using QuickStars.MaViCS.Business.Interfaces.Auth;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Extensions;
 
 namespace QuickStars.MaViCS.Controllers
 {
@@ -19,34 +19,33 @@ namespace QuickStars.MaViCS.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _authService.Login(dto);
-
-            if (result.Type == Business.ResultType.Unauthorized)
-                return Unauthorized();
-
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Route("api/register")]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _authService.Register(dto);
-
-            if (result.Type == Business.ResultType.Unauthorized)
-                return Unauthorized();
-
-            return Ok(result);
+            return this.FromResult(result);
         }
 
-        [HttpGet]
-        [Authorize]
-        [Route("/api/claims")]
-        public async Task<IActionResult> GetUserInfos()
+        [Route("api/resetPassword")]
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
-            var userInfo = await _authService.GetUserInfos(User);
-            return Ok(userInfo);
-        }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            var result = await _authService.ResetPassword(dto);
+            return this.FromResult(result);
+        }
     }
 }

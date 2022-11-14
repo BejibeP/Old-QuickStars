@@ -1,3 +1,5 @@
+using QuickStars.MaViCS.Extensions;
+
 namespace QuickStars.MaViCS
 {
     public class Program
@@ -13,8 +15,6 @@ namespace QuickStars.MaViCS
             builder.Services.ConfigureIdentity(builder.Configuration);
 
             builder.Services.ConfigureDependencyInjection();
-
-            builder.Services.ConfigureAuthentication(builder.Configuration);
 
             builder.Services.ConfigureSwagger(builder.Configuration);
 

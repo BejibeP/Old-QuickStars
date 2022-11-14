@@ -1,61 +1,111 @@
 ﻿namespace QuickStars.MaViCS.Business
 {
+
     public enum ResultType
     {
-        Success,
-        NotFound,
+        Ok,
+        Created,
+        NoContent,
+        BadRequest,
         Unauthorized,
-        Error
+        Forbidden,
+        NotFound,
+        ServerError
     }
 
-    public class ServiceResult
+    public class ServiceResult<T>
     {
         public ResultType Type { get; protected set; }
+        public IList<string> Messages { get; protected set; }
+        public T Value { get; protected set; }
 
-        public string Message { get; protected set; }
-
-        protected ServiceResult(ResultType type, string message)
+        protected ServiceResult()
         {
-            Type = type;
-            Message = message;
+
         }
 
-        public static ServiceResult Success()
+        public static ServiceResult<T> Success(params string[] messages)
         {
-            return new ServiceResult(ResultType.Success, "");
+            return new ServiceResult<T>
+            {
+                Type = ResultType.Ok,
+                Messages = messages.ToList()
+            };
         }
 
-        public static ServiceResult Error(string message)
+        public static ServiceResult<T> Success(T value, params string[] messages)
         {
-            return new ServiceResult(ResultType.Error, message);
+            return new ServiceResult<T>
+            {
+                Type = ResultType.Ok,
+                Messages = messages.ToList(),
+                Value = value
+            };
         }
 
-        public static ServiceResult NotFound(string message)
+        public static ServiceResult<T> Created(T value, params string[] messages)
         {
-            return new ServiceResult(ResultType.NotFound, message);
+            return new ServiceResult<T>
+            {
+                Type = ResultType.Created,
+                Messages = messages.ToList(),
+                Value = value
+            };
         }
 
-        public static ServiceResult Unauthorized(string message)
+        public static ServiceResult<T> NoContent(params string[] messages)
         {
-            return new ServiceResult(ResultType.Unauthorized, message);
+            return new ServiceResult<T>
+            {
+                Type = ResultType.NoContent,
+                Messages = messages.ToList()
+            };
+        }
+
+        public static ServiceResult<T> BadRequest(params string[] messages)
+        {
+            return new ServiceResult<T>
+            {
+                Type = ResultType.BadRequest,
+                Messages = messages.ToList()
+            };
+        }
+
+        public static ServiceResult<T> Unauthorized(params string[] messages)
+        {
+            return new ServiceResult<T>
+            {
+                Type = ResultType.Unauthorized,
+                Messages = messages.ToList()
+            };
+        }
+
+        public static ServiceResult<T> Forbidden(params string[] messages)
+        {
+            return new ServiceResult<T>
+            {
+                Type = ResultType.Forbidden,
+                Messages = messages.ToList()
+            };
+        }
+
+        public static ServiceResult<T> NotFound(params string[] messages)
+        {
+            return new ServiceResult<T>
+            {
+                Type = ResultType.NotFound,
+                Messages = messages.ToList()
+            };
+        }
+
+        public static ServiceResult<T> ServerError(params string[] messages)
+        {
+            return new ServiceResult<T>
+            {
+                Type = ResultType.ServerError,
+                Messages = messages.ToList()
+            };
         }
 
     }
-
-    public class ServiceResult<T> : ServiceResult
-    {
-        public T Result { get; protected set; }
-
-        protected ServiceResult(T result, ResultType type, string message) : base(type, message)
-        {
-            Result = result;
-        }
-        
-        public static ServiceResult<T> Success(T result)
-        {
-            return new ServiceResult<T>(result, ResultType.Success, "");
-        }
-
-    }
-
 }

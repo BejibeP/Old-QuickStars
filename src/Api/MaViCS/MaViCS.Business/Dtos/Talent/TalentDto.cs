@@ -1,7 +1,9 @@
-﻿namespace QuickStars.MaViCS.Domain.Data.Entities
+﻿namespace QuickStars.MaViCS.Business.Dtos
 {
-    public class Talent : BaseEntity
+    public class TalentDto
     {
+        public long Id { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

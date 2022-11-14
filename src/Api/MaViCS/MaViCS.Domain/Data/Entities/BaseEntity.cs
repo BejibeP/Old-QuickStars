@@ -2,7 +2,6 @@
 {
     public abstract class BaseEntity
     {
-
         public long Id { get; set; }
 
         public DateTime CreatedOn { get; set; }
@@ -13,6 +12,5 @@
 
         public DateTime? DeletedOn { get; set; }
         public string? DeletedBy { get; set; }
-
     }
 }

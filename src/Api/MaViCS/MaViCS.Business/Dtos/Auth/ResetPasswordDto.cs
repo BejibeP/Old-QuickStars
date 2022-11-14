@@ -5,7 +5,7 @@ namespace QuickStars.MaViCS.Business.Dtos.Auth
     public class ResetPasswordDto
     {
         [Required]
-        public string Login { get; set; }
+        public string Username { get; set; }
 
         [Required]
         public string Password { get; set; }

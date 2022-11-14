@@ -8,7 +8,6 @@ namespace QuickStars.MaViCS.Domain.Repositories
 {
     public class ShowRepository : BaseRepository<Show>, IShowRepository
     {
-
         public ShowRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
 

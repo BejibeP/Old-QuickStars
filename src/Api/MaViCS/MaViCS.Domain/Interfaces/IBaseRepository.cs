@@ -5,7 +5,6 @@ namespace QuickStars.MaViCS.Domain.Interfaces
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {
-
         Task<IEnumerable<T>> GetAll(bool ignoreArchived = true, params Expression<Func<T, object>>[] includes);
 
         Task<T?> GetById(long id, bool ignoreArchived = true, params Expression<Func<T, object>>[] includes);
@@ -17,6 +16,5 @@ namespace QuickStars.MaViCS.Domain.Interfaces
         Task<bool> Archive(long id);
 
         Task<bool> Delete(long id);
-
     }
 }

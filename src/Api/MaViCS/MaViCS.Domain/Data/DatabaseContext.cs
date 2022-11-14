@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using QuickStars.MaViCS.Domain.Auth;
+using QuickStars.MaViCS.Domain.Data.Configuration;
 using QuickStars.MaViCS.Domain.Data.Entities;
 
 namespace QuickStars.MaViCS.Domain.Data
@@ -12,121 +14,63 @@ namespace QuickStars.MaViCS.Domain.Data
 
         }
 
-        //public DbSet<User> Users { get; set; }
         public DbSet<Talent> Talents { get; set; }
         public DbSet<Show> Shows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //    UserModel.OnModelCreating(modelBuilder);
-            //    TalentModel.OnModelCreating(modelBuilder);
-            //    ShowModel.OnModelCreating(modelBuilder);
+            TalentTypeConfiguration.GetTypeConfiguration()
+                .Configure(builder.Entity<Talent>());
 
-            //    OnModelInitialize(modelBuilder);
+            ShowTypeConfiguration.GetTypeConfiguration()
+                .Configure(builder.Entity<Show>());
+
+            OnModelInitialize(builder);
 
             base.OnModelCreating(builder);
         }
 
-        //protected override void OnModelInitialize(ModelBuilder builder)
-        //{
-        //    //    var supervisor = new User
-        //    //    {
-        //    //        Id = 1,
-        //    //        Username = "superviseur",
-        //    //        //Password = _securityService.HashPassword("admin"),
-        //    //        ResetPassword = true,
-        //    //        Enabled = true
-        //    //    };
+        private void OnModelInitialize(ModelBuilder builder)
+        {
+            // Create Roles
+            var adminRole = new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = IdentityRoles.Admin,
+                NormalizedName = IdentityRoles.Admin.ToUpper()
+            };
+            var userRole = new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = IdentityRoles.User,
+                NormalizedName = IdentityRoles.User.ToUpper()
+            };
 
-        // await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-        // await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            // Seeding AspNetRoles
+            builder.Entity<IdentityRole>().HasData(adminRole, userRole);
 
-        // var supervisor = new IdentityUser
-        //{
-        // UserName = "superviseur",
-        // SecurityStamp = Guid.NewGuid().ToString(),
-        // Password = "admin"
-        //}
+            // Create Admin User
+            var hasher = new PasswordHasher<IdentityUser>();
+            var adminUser = new IdentityUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "admin",
+                NormalizedUserName = "admin".ToUpper(),
+                PasswordHash = hasher.HashPassword(null, "PassW0rD!")
+            };
 
-        // var result = await _userManager.CreateAsync(user, model.Password);
+            //Seeding AspNetUsers
+            builder.Entity<IdentityUser>().HasData(adminUser);
 
-        //    //    modelBuilder.Entity<User>().HasData(supervisor);
-        //}
+            var adminRoles = new IdentityUserRole<string>
+            {
+                RoleId = adminRole.Id,
+                UserId = adminUser.Id
+            };
 
-
-        //public override int SaveChanges()
-        //{
-        //    ApplyTimestampToEntries();
-        //    return base.SaveChanges();
-        //}
-
-        //public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        //{
-        //    ApplyTimestampToEntries();
-        //    return base.SaveChangesAsync(cancellationToken);
-        //}
-
-        //private void ApplyTimestampToEntries()
-        //{
-        //    var entries = ChangeTracker.Entries()
-        //        .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
-        //    foreach (var entry in entries)
-        //    {
-        //        if (entry.Entity is not BaseEntity)
-        //            continue;
-
-        //        if (entry.State == EntityState.Added)
-        //        {
-        //            ((BaseEntity)entry.Entity).CreatedOn = DateTime.UtcNow;
-        //            ((BaseEntity)entry.Entity).CreatedBy = "Application";
-        //        }
-
-        //        if (entry.State == EntityState.Modified)
-        //        {
-        //            ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
-        //            ((BaseEntity)entry.Entity).ModifiedBy = "Application";
-        //        }
-        //    }
-        //}
+            // Seeding Admin role to the Admin user
+            builder.Entity<IdentityUserRole<string>>().HasData(adminRoles);
+        }
 
     }
 }
-/*
-
-public class User : BaseEntity
-{
-
-    public string Username { get; set; }
-
-    public string Password { get; set; }
-
-    public DateTime? LastLoggedOn { get; set; }
-
-    public bool ResetPassword { get; set; }
-
-    public bool Enabled { get; set; }
-
-}
-
-public class UserModel
-{
-    public static void OnModelCreating(ModelBuilder modelBuilder)
-    {
-
-        modelBuilder.Entity<User>()
-            .HasKey(e => e.Id);
-
-        modelBuilder.Entity<User>()
-            .HasIndex(e => e.Username)
-            .IsUnique();
-
-        modelBuilder.Entity<User>()
-            .Property(e => e.ResetPassword).HasDefaultValue(false);
-
-        modelBuilder.Entity<User>()
-            .Property(e => e.Enabled).HasDefaultValue(false);
-
-    }
-}
-*/

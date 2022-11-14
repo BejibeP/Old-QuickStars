@@ -6,11 +6,9 @@ namespace QuickStars.MaViCS.Domain.Repositories
 {
     public class TalentRepository : BaseRepository<Talent>, ITalentRepository
     {
-
         public TalentRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
 
         }
-
     }
 }
