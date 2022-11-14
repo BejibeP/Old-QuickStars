@@ -1,16 +1,6 @@
-using MaViCS.Business.Interfaces;
-using MaViCS.Business.Services;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Persistance;
-using MaViCS.Domain.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
+using QuickStars.MaViCS.Extensions;
 
-namespace MaViCS
+namespace QuickStars.MaViCS
 {
     public class Program
     {
@@ -18,11 +8,13 @@ namespace MaViCS
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.LoadConfiguration(builder.Configuration);
+
             builder.Services.ConfigureDatabase(builder.Configuration);
 
-            builder.Services.ConfigureDependencyInjection();
+            builder.Services.ConfigureIdentity(builder.Configuration);
 
-            builder.Services.ConfigureAuthentication(builder.Configuration);
+            builder.Services.ConfigureDependencyInjection();
 
             builder.Services.ConfigureSwagger(builder.Configuration);
 
@@ -36,7 +28,6 @@ namespace MaViCS
             }
 
             app.UseHttpsRedirection();
-            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();

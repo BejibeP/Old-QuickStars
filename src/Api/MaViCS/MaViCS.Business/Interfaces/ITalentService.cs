@@ -1,21 +1,19 @@
-﻿using MaViCS.Business.Dtos;
+﻿using QuickStars.MaViCS.Business.Dtos;
 
-namespace MaViCS.Business.Interfaces
+namespace QuickStars.MaViCS.Business.Interfaces
 {
     public interface ITalentService
     {
+        Task<ServiceResult<IEnumerable<TalentDto>>> GetTalents();
 
-        Task<IEnumerable<TalentDto>> GetTalents();
+        Task<ServiceResult<TalentDto>> GetTalentById(long id);
 
-        Task<TalentDto?> GetTalentById(long id);
+        Task<ServiceResult<TalentDto>> AddTalent(CreateTalentDto talentDto);
 
-        Task<TalentDto?> AddTalent(CreateTalentDto talentDto);
+        Task<ServiceResult<TalentDto>> UpdateTalent(long id, UpdateTalentDto talentDto);
 
-        Task<TalentDto?> UpdateTalent(long id, UpdateTalentDto talentDto);
+        Task<ServiceResult<bool>> ArchiveTalent(long id);
 
-        Task<bool> ArchiveTalent(long id);
-
-        Task<bool> DeleteTalent(long id);
-
+        Task<ServiceResult<bool>> DeleteTalent(long id);
     }
 }

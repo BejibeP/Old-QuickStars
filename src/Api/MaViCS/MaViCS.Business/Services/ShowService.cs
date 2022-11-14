@@ -1,59 +1,94 @@
-﻿using MaViCS.Business.Dtos;
-using MaViCS.Business.Interfaces;
-using MaViCS.Domain.Interfaces;
-using MaViCS.Domain.Models;
-using MaViCS.Domain.Repositories;
+﻿using QuickStars.MaViCS.Business.Dtos;
+using QuickStars.MaViCS.Business.Dtos.Extensions;
+using QuickStars.MaViCS.Business.Interfaces;
+using QuickStars.MaViCS.Domain.Interfaces;
 
-namespace MaViCS.Business.Services
+namespace QuickStars.MaViCS.Business.Services
 {
     public class ShowService : IShowService
     {
-        public readonly ITourRepository _tourRepository;
         public readonly IShowRepository _showRepository;
+        public readonly ITalentRepository _talentRepository;
 
-        public ShowService(ITourRepository tourRepository, IShowRepository showRepository)
+        public ShowService(IShowRepository showRepository, ITalentRepository talentRepository)
         {
-            _tourRepository = tourRepository;
             _showRepository = showRepository;
+            _talentRepository = talentRepository;
         }
 
-        public async Task<IOrderedEnumerable<ShowDto>> GetShowsByTour(long tourId)
+        public async Task<ServiceResult<IEnumerable<ShowDto>>> GetShows()
         {
-            var shows = await _showRepository.GetShowsByTour(tourId);
+            var shows = await _showRepository.GetAll(true, x => x.Talent);
 
-            return shows.Select(x => x.ToShowDto()).OrderBy(x => x.Date);
+            var showDtos = shows.Select(e => e.ToShowDto()).ToList();
+
+            return ServiceResult<IEnumerable<ShowDto>>.Success(showDtos);
         }
 
-        public async Task<ShowDto?> AddShow(long tourId, CreateOrUpdateShowDto showDto)
+        public async Task<ServiceResult<IEnumerable<ShowDto>>> GetShowsByTalent(long talentId)
         {
-            var tour = await _tourRepository.GetTourById(tourId, true, false);
+            var shows = await _showRepository.GetByTalent(talentId, true, x => x.Talent);
 
-            if (tour == null)
-                return null;
+            var showDtos = shows.Select(e => e.ToShowDto()).ToList();
 
-            var show = showDto.ToShow();
-            show.TourId = tourId;
-
-            show = await _showRepository.AddShow(show);
-            return show?.ToShowDto();
+            return ServiceResult<IEnumerable<ShowDto>>.Success(showDtos);
         }
 
-        public async Task<ShowDto?> UpdateShow(long showId, CreateOrUpdateShowDto showDto)
+        public async Task<ServiceResult<ShowDto>> GetShowById(long id)
         {
-            var show = await _showRepository.GetShowById(showId, true, false);
+            var show = await _showRepository.GetById(id, true, x => x.Talent);
+            if (show is null)
+                return ServiceResult<ShowDto>.NotFound("Show not found");
 
+            return ServiceResult<ShowDto>.Success(show.ToShowDto());
+        }
+
+        public async Task<ServiceResult<ShowDto>> AddShow(CreateOrUpdateShowDto showDto)
+        {
+            var talent = _talentRepository.GetById(showDto.TalentId);
+            if (talent == null)
+                return ServiceResult<ShowDto>.NotFound("Talent not found");
+
+            var show = await _showRepository.Create(showDto.ToShow());
+            if (show is null)
+                return ServiceResult<ShowDto>.ServerError();
+
+            return ServiceResult<ShowDto>.Success(show.ToShowDto());
+        }
+
+        public async Task<ServiceResult<ShowDto>> UpdateShow(long showId, CreateOrUpdateShowDto showDto)
+        {
+            var show = await _showRepository.GetById(showId, true);
             if (show == null)
-                return null;
+                return ServiceResult<ShowDto>.NotFound("Show not found");
 
-            show = show.UpdateShow(showDto);
+            var talent = _talentRepository.GetById(showDto.TalentId);
+            if (talent == null)
+                return ServiceResult<ShowDto>.NotFound("Talent not found");
 
-            show = await _showRepository.UpdateShow(show);
-            return show?.ToShowDto();
+            show = await _showRepository.Update(show.UpdateShow(showDto));
+            if (show is null)
+                return ServiceResult<ShowDto>.ServerError();
+
+            return ServiceResult<ShowDto>.Success(show.ToShowDto());
         }
 
-        public async Task<bool> DeleteShow(long id)
+        public async Task<ServiceResult<bool>> ArchiveShow(long id)
         {
-            return await _showRepository.DeleteShow(id);
+            bool result = await _showRepository.Archive(id);
+            if (!result)
+                return ServiceResult<bool>.NotFound();
+
+            return ServiceResult<bool>.NoContent();
+        }
+
+        public async Task<ServiceResult<bool>> DeleteShow(long id)
+        {
+            bool result = await _showRepository.Delete(id);
+            if (!result)
+                return ServiceResult<bool>.NotFound();
+
+            return ServiceResult<bool>.NoContent();
         }
 
     }

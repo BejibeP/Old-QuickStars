@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,8 +7,11 @@
     <UserSecretsId>ce315eaa-4629-4718-83b6-b198387e46ef</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
-    <StartupObject>MaViCS.Program</StartupObject>
-    <Authors>Bejibe</Authors>
+    <StartupObject>QuickStars.MaViCS.Program</StartupObject>
+    <Authors>BejibeP</Authors>
+    <AssemblyName>QuickStars.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>QuickStars.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Title>QuickStars.MaViCS</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +20,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,13 +32,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.23.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MaViCS.Business\MaViCS.Business.csproj" />
+    <ProjectReference Include="..\MaViCS.Domain\MaViCS.Domain.csproj" />
   </ItemGroup>
 
 </Project>
